@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 export const BentoGrid = ({
   className,
@@ -11,7 +12,7 @@ export const BentoGrid = ({
     <div
       className={cn(
         "mx-auto grid max-w-7xl grid-cols-1 gap-4 md:auto-rows-[18rem] md:grid-cols-8",
-        className,
+        className
       )}
     >
       {children}
@@ -35,20 +36,43 @@ export const BentoGridItem = ({
   return (
     <div
       className={cn(
-        "group/bento shadow-input row-span-1 flex flex-col justify-between space-y-4 rounded-xl border border-neutral-200 bg-white p-4 transition duration-200 hover:shadow-xl dark:border-white/[0.2] dark:bg-black dark:shadow-none",
-        className,
+        "group/bento row-span-1 relative h-full border rounded-xl",
+        className
       )}
     >
-      {header}
-      <div className="transition duration-200 group-hover/bento:translate-x-2">
-        {icon}
-        <div className="mt-2 mb-2 font-sans font-bold text-neutral-600 dark:text-neutral-200">
-          {title}
-        </div>
-        <div className="font-sans text-xs font-normal text-neutral-600 dark:text-neutral-300">
-          {description}
+      <GlowingEffect
+        blur={0}
+        borderWidth={3}
+        spread={80}
+        glow={true}
+        disabled={false}
+        proximity={64}
+        inactiveZone={0.01}
+      />
+      <div className="border-0.75 relative bg-white flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl p-4 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
+        <div className="relative flex flex-1 flex-col justify-between gap-3">
+          {header && (
+            <div className="w-fit rounded-lg border border-gray-600 p-2">
+              {header}
+            </div>
+          )}
+          <div className="space-y-3">
+            {icon && (
+              <div className="w-fit rounded-lg border border-gray-600 p-2">
+                {icon}
+              </div>
+            )}
+            <h3 className="-tracking-4 pt-0.5 font-sans text-xl/[1.375rem] font-semibold text-balance text-black md:text-2xl/[1.875rem] dark:text-white">
+              {title}
+            </h3>
+            <h2 className="font-sans text-sm/[1.125rem] text-black md:text-base/[1.375rem] dark:text-neutral-400 [&_b]:md:font-semibold [&_strong]:md:font-semibold">
+              {description}
+            </h2>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+

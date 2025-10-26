@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { BentoBox } from "@/components/bento-box";
+import { BentoFeatures } from "@/components/bento-features";
 import { useEffect } from "react";
 
 // Extend the Window interface to include UnicornStudio
@@ -127,7 +127,7 @@ export default function Home() {
               intelligent automation.
             </p>
           </div>
-          <BentoBox />
+          <BentoFeatures />
         </div>
       </section>
 
