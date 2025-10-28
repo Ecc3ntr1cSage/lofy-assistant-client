@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
+import AppNavBar from "@/components/app-navbar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { BentoFeatures } from "@/components/bento-features";
 import { useEffect } from "react";
 
@@ -20,7 +22,7 @@ export default function Home() {
   useEffect(() => {
     // Initialize UnicornStudio only on the client side
     if (!window.UnicornStudio) {
-      window.UnicornStudio = { isInitialized: false, init: () => {} };
+      window.UnicornStudio = { isInitialized: false, init: () => { } };
       const script = document.createElement("script");
       script.src =
         "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js";
@@ -36,10 +38,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen">
-      {/* <Navbar /> */}
+      <AppNavBar />
       {/* Top-right unicorn.studio element (fixed, sits still) */}
       <div
-        className="pointer-events-none fixed top-0 right-0 z-[-5]"
+        className="fixed pointer-events-none top-0 right-20 z-[-5] "
         aria-hidden="true"
       >
         <div
@@ -48,48 +50,47 @@ export default function Home() {
         ></div>
       </div>
 
-      <section className="relative h-svh flex pt-16 overflow-hidden">
+      <section className="relative h-svh flex overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-30 left-1/4 w-72 h-72 bg-linear-to-r from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-75 left-96 w-96 h-96 bg-linear-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-24 w-64 h-64 bg-linear-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute top-10 left-1/10 w-96 h-96 bg-linear-to-r from-purple-400/30 to-teal-400/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 left-1/4 w-96 h-96 bg-linear-to-r from-violet-400/30 to-indigo-400/30 rounded-full blur-3xl animate-pulse "></div>
+          <div className="absolute bottom-1/4 left-1/10 w-96 h-96 bg-linear-to-r from-green-400/30 to-fuchsia-400/30 rounded-full blur-3xl animate-pulse "></div>
         </div>
 
-        <div className="container mx-auto flex-1 grid grid-rows-1 grid-cols-1">
-          <div className="self-center justify-self-start p-8 sm:p-12 md:p-16 relative z-10">
-            <div className="space-y-6">
+        <div className="max-w-7xl mx-auto flex-1 grid grid-rows-1 grid-cols-1 h-[calc(100vh-6rem)]">
+          <div className="self-center justify-self-start px-4 sm:px-6 md:px-8 relative z-10">
+            <div className="space-y-2">
               <Badge
                 variant="secondary"
-                className="px-4 py-2 bg-linear-to-r from-emerald-500/20 to-green-500/20 border border-emerald-300/30 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="px-4 py-2 bg-linear-to-r from-emerald-400/30 to-indigo-500/40 border border-white backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105"
               >
-                <div className="w-3 h-3 bg-linear-to-r from-emerald-500 to-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium bg-linear-to-r from-emerald-700 to-blue-700 bg-clip-text text-transparent">
+                <span className="text-xs bg-linear-to-r from-emerald-800 to-indigo-800 bg-clip-text text-transparent">
                   ✨ AI-Powered Productivity Application
                 </span>
               </Badge>
               <div className="space-y-4">
-                <h1 className="text-6xl lg:text-8xl font-bold bg-linear-to-r from-emerald-700 via-indigo-700/70 to-emerald-700 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-5xl lg:text-8xl font-bold bg-linear-to-r from-emerald-700/80 via-indigo-700/80 to-emerald-700 bg-clip-text text-transparent leading-tight">
                   Lofy ;
                 </h1>
-                <p className="text-xl lg:text-2xl text-gray-800 max-w-2xl leading-relaxed ">
-                  Assistant AI Agent. No Apps Needed. Just Whatsapp.
+                <p className="text-lg lg:text-xl text-gray-800 max-w-2xl leading-relaxed ">
+                  Meet your new right hand man.<br /> An Agentic AI Personal Assistant that get things done.
                 </p>
               </div>
             </div>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button
+              <Button asChild
                 size="lg"
-                className="text-lg text-secondary px-8 py-6 bg-linear-to-r from-emerald-400 to-indigo-500 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="text-lg text-secondary px-8 py-6 bg-linear-to-r from-emerald-600/80 to-indigo-600/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
               >
-                🚀 Get Started
+                <Link href="/auth/register">🤖 Try Lofy Now</Link>
               </Button>
-              <Button
+              <Button asChild
                 variant="link"
                 size="lg"
                 className="text-lg px-8 py-6  transition-all duration-300 hover:scale-105 text-muted-foreground"
               >
-                Learn More
+                <Link href="/auth/login">Learn More</Link>
               </Button>
             </div>
             <div className="mt-6 flex items-center gap-6 text-sm text-gray-500">
@@ -98,7 +99,8 @@ export default function Home() {
                 <span>Free To Use</span>
               </div>
               <div className="flex items-center gap-2">
-                <span>⚡Unlock AI Power Instantly</span>
+                <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse"></div>
+                <span>No Apps Download</span>
               </div>
             </div>
           </div>
@@ -121,8 +123,8 @@ export default function Home() {
             <h2 className="text-5xl font-bold mb-6 bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               Your Personal Assistant AI Agent
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Lofy integrates seamlessly into your workflow, understanding
+            <p className="text-md lg:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
+              Lofy is an agentic AI personal assistant that integrates seamlessly into your workflow, understanding
               context and automating tasks to boost your productivity with
               intelligent automation.
             </p>
@@ -549,7 +551,6 @@ export default function Home() {
                 <span className="font-medium">Cancel anytime</span>
               </div>
             </div>
-
             <div className="pt-8">
               <p className="text-blue-200 text-sm">
                 Trusted by 10,000+ professionals worldwide
