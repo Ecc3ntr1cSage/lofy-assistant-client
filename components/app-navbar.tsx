@@ -51,12 +51,12 @@ export default function AppNavbar({
   actions = [
     {
       text: "Sign in",
-      href: "/auth/login",
+      href: "/login",
       isButton: false,
     },
     {
       text: "Get Started",
-      href: "/auth/register",
+      href: "/register",
       isButton: true,
       variant: "default",
     },

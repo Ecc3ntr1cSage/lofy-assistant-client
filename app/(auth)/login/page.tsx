@@ -71,8 +71,8 @@ export default function LoginPage() {
         }}
         className="relative flex flex-col gap-4 items-center justify-center px-4"
       >
-        <div className="min-h-screen flex items-center justify-center px-4">
-          <Card className="max-w-md bg-background">
+        <div className="min-h-screen flex items-center justify-center">
+          <Card className="min-w-sm mx-auto shadow-xl">
             <CardHeader className="text-center">
               <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
               <CardDescription>

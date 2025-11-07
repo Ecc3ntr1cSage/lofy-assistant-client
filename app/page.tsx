@@ -41,12 +41,12 @@ export default function Home() {
       <AppNavBar />
       {/* Top-right unicorn.studio element (fixed, sits still) */}
       <div
-        className="fixed pointer-events-none top-0 right-20 z-[-5] "
+        className="fixed pointer-events-none -top-20 right-20 z-[-5] "
         aria-hidden="true"
       >
         <div
           data-us-project="8sHyXD7I66ltEy9jeNC0"
-          style={{ width: "1080px", height: "1080px" }}
+          style={{ width: "1080px", height: "1200px" }}
         ></div>
       </div>
 

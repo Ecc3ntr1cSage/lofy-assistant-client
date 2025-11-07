@@ -1,0 +1,197 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+
+
+// Users table - main user management
+model users {
+  id             String    @id @db.Uuid
+  encryptedPhone String    @map("encrypted_phone")
+  hashedPhone    String    @map("hashed_phone")
+  pin            String?
+  email          String?   @unique
+  name           String?
+  role           Int       @default(1)
+  metadata       Json?     @db.JsonB
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  feedbacks       feedbacks[]
+  memories        memories[]
+  calendar_events calendar_events[]
+  tasks           tasks[]
+  collections     collections[]
+  reminders       reminders[]
+
+  @@map("users")
+  @@index([email])
+}
+
+// Feedbacks table
+model feedbacks {
+  id          Int       @id @default(autoincrement())
+  user_id     String    @db.Uuid
+  title       String
+  description String?
+  tag         String
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user        users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("feedbacks")
+  @@index([user_id])
+  @@index([tag])
+}
+
+// Memories table
+model memories {
+  id          Int       @id @default(autoincrement())
+  user_id     String    @db.Uuid
+  title       String?
+  content     String
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user        users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("memories")
+  @@index([user_id])
+}
+
+// Calendar Events table
+model calendar_events {
+  id                   Int       @id @default(autoincrement())
+  user_id              String    @db.Uuid
+  title                String
+  description          String?
+  start_time           DateTime  @db.Timestamptz(6)
+  end_time             DateTime  @db.Timestamptz(6)
+  timezone             String
+  is_all_day           Boolean   @default(false)
+  createdAt            DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user                 users                   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  calendar_event_google calendar_event_google?
+
+  @@map("calendar_events")
+  @@index([user_id])
+  @@index([start_time])
+  @@index([end_time])
+}
+
+// Calendar Event Google sync table
+model calendar_event_google {
+  id                  Int       @id @default(autoincrement())
+  event_id            Int       @unique
+  event_id_str        String
+  google_calendar_id  String
+  raw_google_data     Json
+  google_event_id     String
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  calendar_event      calendar_events @relation(fields: [event_id], references: [id], onDelete: Cascade)
+
+  @@map("calendar_event_google")
+  @@index([google_event_id])
+}
+
+// Tasks table
+model tasks {
+  id                  Int       @id @default(autoincrement())
+  user_id             String    @db.Uuid
+  collection_id       Int?
+  title               String
+  description         String?
+  status              String
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user                users               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  collection          collections?        @relation(fields: [collection_id], references: [id], onDelete: SetNull)
+
+  @@map("tasks")
+  @@index([user_id])
+  @@index([collection_id])
+  @@index([status])
+}
+
+// Collections table
+model collections {
+  id                  Int       @id @default(autoincrement())
+  user_id             String    @db.Uuid
+  shared_token        String?
+  title               String
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user                users                 @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tasks               tasks[]
+  collection_members  collection_members[]
+
+  @@map("collections")
+  @@index([user_id])
+  @@index([shared_token])
+}
+
+// Collection Members table (for sharing collections)
+model collection_members {
+  id              Int       @id @default(autoincrement())
+  collection_id   Int
+  user_id         String    @db.Uuid
+  role            String
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  collection      collections @relation(fields: [collection_id], references: [id], onDelete: Cascade)
+
+  @@map("collection_members")
+  @@unique([collection_id, user_id])
+  @@index([collection_id])
+  @@index([user_id])
+}
+
+// Reminders table
+model reminders {
+  id              Int       @id @default(autoincrement())
+  user_id         String    @db.Uuid
+  message         String
+  reminder_time   DateTime  @db.Timestamptz(6)
+  status          String
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  
+  // Relations
+  user            users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("reminders")
+  @@index([user_id])
+  @@index([reminder_time])
+  @@index([status])
+}
+
+
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
