@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { BentoFeatures } from "@/components/bento-features";
 import { useEffect } from "react";
+import Testimonials from "@/components/testimonials";
 
 // Extend the Window interface to include UnicornStudio
 declare global {
@@ -107,6 +108,7 @@ export default function Home() {
         </div>
       </section>
 
+
       {/* Features Section */}
       <section className="py-24 bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30 relative overflow-hidden">
         {/* Background decoration */}
@@ -134,7 +136,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      {/* <section className="py-24 bg-white relative overflow-hidden">
         <div className="container mx-auto px-8">
           <div className="text-center mb-20">
             <Badge
@@ -155,7 +157,6 @@ export default function Home() {
           </div>
 
           <div className="relative">
-            {/* Connecting lines for desktop */}
             <div className="hidden md:block absolute top-20 left-0 right-0 h-0.5 bg-linear-to-r from-blue-200 via-purple-200 to-green-200"></div>
 
             <div className="grid md:grid-cols-4 gap-8 relative">
@@ -289,7 +290,13 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section> */}
+      {/* Testimonials Section */}
+      <section className="py-24 bg-linear-to-br from-gray-700 via-emerald-800 to-indigo-900 relative overflow-hidden">
+        <Testimonials />
       </section>
+
+
 
       {/* Benefits Section */}
       <section className="py-24 bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30 relative overflow-hidden">

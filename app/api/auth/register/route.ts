@@ -15,6 +15,11 @@ const registerSchema = z.object({
   pin: z.string().length(6, "PIN must be exactly 6 digits").regex(/^\d+$/, "PIN must contain only numbers"),
 });
 
+function hashPhone(phone: string) {
+  const normalized = phone.replace("+", "").trim();
+  return crypto.createHash("sha256").update(normalized).digest("hex");
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -39,8 +44,8 @@ export async function POST(request: NextRequest) {
     const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
-          { encryptedPhone: phoneNumber },
-          { hashedPhone: phoneNumber },
+          { encryptedPhone: hashPhone(phoneNumber) },
+          { hashedPhone: hashPhone(phoneNumber) },
         ],
       },
     });
@@ -50,22 +55,10 @@ export async function POST(request: NextRequest) {
 
     // Create metadata object with onboarding questions
     const metadata = {
-      onboarding: {
-        question1: {
-          question: "How did you hear about us?",
-          answer: question1,
-        },
-        question2: {
-          question: "What is your primary goal?",
-          answer: question2,
-        },
-        question3: {
-          question: "Tell us more about your needs",
-          answer: question3,
-        },
-      },
-      onboardingCompleted: true,
-    };
+      "professional_background": question1,
+      "discovery_source": question2,
+      "about_yourself": question3
+    }
 
     let user;
     let isNewUser = false;
@@ -100,8 +93,8 @@ export async function POST(request: NextRequest) {
           id: userId,
           name,
           email,
-          encryptedPhone: phoneNumber, // Supabase will handle encryption
-          hashedPhone: phoneNumber,    // Supabase will handle hashing
+          encryptedPhone: hashPhone(phoneNumber), // Supabase will handle encryption
+          hashedPhone: hashPhone(phoneNumber),    // Supabase will handle hashing
           pin: hashedPin,
           role: 1, // Default user role
           metadata,

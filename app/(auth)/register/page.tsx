@@ -208,7 +208,7 @@ export default function RegisterPage() {
               {currentStep === 2 && (
                 <div className="space-y-4 animate-in fade-in-50 duration-300">
                   <div className="space-y-2">
-                    <Label htmlFor="question1">How did you hear about us?</Label>
+                    <Label htmlFor="question1">What is your professional background?</Label>
                     <Select
                       value={formData.question1}
                       onValueChange={(value) => updateFormData("question1", value)}
@@ -217,16 +217,17 @@ export default function RegisterPage() {
                         <SelectValue placeholder="Select an option" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="social-media">Social Media</SelectItem>
-                        <SelectItem value="friend">Friend or Colleague</SelectItem>
-                        <SelectItem value="search-engine">Search Engine</SelectItem>
-                        <SelectItem value="advertisement">Advertisement</SelectItem>
+                        <SelectItem value="student">Student</SelectItem>
+                        <SelectItem value="full-time">Employed Full-Time</SelectItem>
+                        <SelectItem value="part-time">Employed Part-Time</SelectItem>
+                        <SelectItem value="self-employed">Self-employed</SelectItem>
+                        <SelectItem value="neet">NEET</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="question2">What is your primary goal?</Label>
+                    <Label htmlFor="question2">Where did you know Lofy from?</Label>
                     <Select
                       value={formData.question2}
                       onValueChange={(value) => updateFormData("question2", value)}
@@ -235,17 +236,18 @@ export default function RegisterPage() {
                         <SelectValue placeholder="Select an option" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="personal-use">Personal Use</SelectItem>
-                        <SelectItem value="business">Business</SelectItem>
-                        <SelectItem value="education">Education</SelectItem>
-                        <SelectItem value="research">Research</SelectItem>
+                        <SelectItem value="social-media">Social Media</SelectItem>
+                        <SelectItem value="search-engine">Search Engine</SelectItem>
+                        <SelectItem value="friend-colleague">Friend or Colleague</SelectItem>
+                        <SelectItem value="online-advertisement">Online Advertisement</SelectItem>
+                        <SelectItem value="article-blog">Article or Blog</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="question3">
-                      Tell us more about your needs (optional)
+                      Tell Lofy more about yourself. (optional)
                     </Label>
                     <textarea
                       id="question3"
