@@ -1,24 +1,88 @@
+"use client"
+
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock } from "lucide-react"
+import { Calendar, Clock, Loader2 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 
 interface CalendarEvent {
   id: number
   title: string
   description: string | null
-  start_time: Date
-  end_time: Date
+  start_time: string
+  end_time: string
   is_all_day: boolean
 }
 
-interface CalendarEventsListProps {
-  events: CalendarEvent[]
-}
+export function CalendarEventsList() {
+  const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-export function CalendarEventsList({ events }: CalendarEventsListProps) {
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const response = await fetch("/api/calendar", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        })
+        
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}))
+          console.error("Failed to fetch events:", response.status, errorData)
+          throw new Error(
+            errorData.error || `Failed to fetch events (${response.status})`
+          )
+        }
+
+        const data = await response.json()
+        
+        if (!data.events) {
+          throw new Error("Invalid response format")
+        }
+        
+        setEvents(data.events)
+      } catch (err) {
+        console.error("Error fetching calendar events:", err)
+        setError(err instanceof Error ? err.message : "An error occurred")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchEvents()
+  }, [])
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <Loader2 className="h-12 w-12 animate-spin text-muted-foreground mb-4" />
+          <p className="text-center text-muted-foreground">
+            Loading calendar events...
+          </p>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <Calendar className="h-12 w-12 text-destructive mb-4" />
+          <p className="text-center text-destructive">{error}</p>
+        </CardContent>
+      </Card>
+    )
+  }
+
   if (events.length === 0) {
     return (
       <Card>
@@ -33,19 +97,19 @@ export function CalendarEventsList({ events }: CalendarEventsListProps) {
   }
 
   return (
-    <div className="space-y-3">
-      {events.map((event, index) => {
+    <div className="">
+      {events.map((event) => {
         const startDate = new Date(event.start_time)
         const endDate = new Date(event.end_time)
         const isToday = format(startDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
         
         return (
           <Link key={event.id} href={`/dashboard/calendar/${event.id}`}>
-            <Card className="transition-all hover:shadow-md hover:border-primary/50">
+            <Card className="transition-all hover:shadow-md hover:border-primary/50 mt-2">
               <CardContent className="p-0">
                 <div className="flex gap-0">
                   {/* Date Section */}
-                  <div className="flex-shrink-0 w-28 bg-muted/50 p-4 flex flex-col items-center justify-center border-r">
+                  <div className="w-28 p-4 flex flex-col items-center justify-center border-r">
                     <Badge variant={isToday ? "default" : "outline"} className="mb-2">
                       {format(startDate, "EEE")}
                     </Badge>

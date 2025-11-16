@@ -4,14 +4,11 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
-import { getCalendarEvents } from "@/lib/actions/calendar"
 import { CalendarEventsList } from "@/components/calendar-events-list"
 import { Calendar } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 
-export default async function Page() {
-  const events = await getCalendarEvents()
-
+export default function Page() {
   return (
     <SidebarProvider
       style={
@@ -36,7 +33,7 @@ export default async function Page() {
                   View and manage your upcoming events
                 </p>
                 <Separator className="mb-6" />
-                <CalendarEventsList events={events} />
+                <CalendarEventsList />
               </div>
             </div>
           </div>
