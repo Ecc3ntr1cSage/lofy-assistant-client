@@ -1,130 +1,69 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { prisma } from "@/lib/prisma";
 
-// Zod validation schema matching the Prisma users model
-const registerSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  email: z.string().email("Invalid email address"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 characters"),
-  question1: z.string().min(1, "Question 1 is required"),
-  question2: z.string().min(1, "Question 2 is required"),
-  question3: z.string().min(1, "Question 3 is required"),
-  pin: z.string().length(6, "PIN must be exactly 6 digits").regex(/^\d+$/, "PIN must contain only numbers"),
-});
-
-function hashPhone(phone: string) {
-  const normalized = phone.replace("+", "").trim();
-  return crypto.createHash("sha256").update(normalized).digest("hex");
+function hashPhone(phone: string): string {
+  const normalizedPhone = phone.replace(/\D/g, "");
+  return crypto.createHash("sha256").update(normalizedPhone).digest("hex");
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let { phone, phoneNumber, pin, name, email, question1, question2, question3 } = await request.json();
 
-    // Validate request body with Zod
-    const validationResult = registerSchema.safeParse(body);
+    // Handle both 'phone' and 'phoneNumber' fields
+    const phoneValue = phone || phoneNumber;
 
-    if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: "Validation failed",
-          details: validationResult.error.issues,
-        },
-        { status: 400 }
-      );
+    // Normalize phone: remove all non-digits including '+'
+    const normalizedPhone = phoneValue?.replace(/\D/g, "") || "";
+
+    if (!normalizedPhone || !pin || !name) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    const { name, email, phoneNumber, question1, question2, question3, pin } = validationResult.data;
+    // Validate phone format
+    const phoneRegex = /^[0-9]{10,15}$/;
+    if (!phoneRegex.test(normalizedPhone)) {
+      return NextResponse.json({ error: "Invalid phone number format" }, { status: 400 });
+    }
 
-    // Check if user exists by phone number (Supabase handles the hashing)
-    // We'll search by the raw phone number as Supabase will handle the comparison
-    const existingUser = await prisma.users.findFirst({
-      where: {
-        OR: [
-          { encryptedPhone: hashPhone(phoneNumber) },
-          { hashedPhone: hashPhone(phoneNumber) },
-        ],
+    // Validate PIN - must be exactly 6 digits
+    if (!/^\d{6}$/.test(pin)) {
+      return NextResponse.json({ error: "PIN must be exactly 6 digits" }, { status: 400 });
+    }
+
+    const hashedPhone = hashPhone(normalizedPhone);
+
+    // Check for existing user
+    const existingUser = await prisma.users.findUnique({
+      where: { hashed_phone: hashedPhone },
+    });
+
+    if (existingUser) {
+      return NextResponse.json({ error: "User already exists" }, { status: 409 });
+    }
+
+    // Hash PIN
+    const hashedPin = await bcrypt.hash(pin, 10);
+
+    const user = await prisma.users.create({
+      data: {
+        name,
+        hashed_phone: hashedPhone,
+        pin: hashedPin,
+        // Add other fields if your schema supports them
+        // email: email || null,
+        // You might want to store onboarding answers in a separate table
       },
     });
 
-    // Hash the PIN (acts as password)
-    const hashedPin = await bcrypt.hash(pin, 10);
-
-    // Create metadata object with onboarding questions
-    const metadata = {
-      "professional_background": question1,
-      "discovery_source": question2,
-      "about_yourself": question3
-    }
-
-    let user;
-    let isNewUser = false;
-
-    if (existingUser) {
-      // Update existing user profile
-      user = await prisma.users.update({
-        where: { id: existingUser.id },
-        data: {
-          name,
-          email,
-          pin: hashedPin,
-          metadata,
-          updatedAt: new Date(),
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          createdAt: true,
-          updatedAt: true,
-        },
-      });
-    } else {
-      // Create new user
-      isNewUser = true;
-      const userId = crypto.randomUUID();
-
-      user = await prisma.users.create({
-        data: {
-          id: userId,
-          name,
-          email,
-          encryptedPhone: hashPhone(phoneNumber), // Supabase will handle encryption
-          hashedPhone: hashPhone(phoneNumber),    // Supabase will handle hashing
-          pin: hashedPin,
-          role: 1, // Default user role
-          metadata,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          createdAt: true,
-        },
-      });
-    }
-
     return NextResponse.json(
-      {
-        message: isNewUser ? "Registration successful" : "Profile updated successfully",
-        user,
-        isNewUser,
-      },
-      { status: isNewUser ? 201 : 200 }
+      { success: true, message: "User registered successfully", userId: user.id, isNewUser: true },
+      { status: 201 }
     );
   } catch (error) {
     console.error("Registration error:", error);
-    return NextResponse.json(
-      {
-        error: "Internal server error",
-        message: error instanceof Error ? error.message : "Unknown error",
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
   }
 }

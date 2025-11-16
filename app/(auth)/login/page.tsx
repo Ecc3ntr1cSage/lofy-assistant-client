@@ -12,14 +12,14 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { motion } from "motion/react"
-// import { ControllerRenderProps } from "react-hook-form"
+import { toast } from "sonner"
 
 const loginSchema = z.object({
   countryCode: z.string().min(1, "Country code is required"),
   phoneNumber: z.string()
-    .min(9, "Phone number must be 9 digits")
-    .max(9, "Phone number must be 9 digits")
-    .regex(/^\d{9}$/, "Phone number must contain only digits"),
+    .min(8, "Phone number must be valid")
+    .max(15, "Phone number must be valid")
+    .regex(/^\d{8,15}$/, "Phone number must contain only digits"),
   pin: z.string()
     .min(6, "PIN must be 6 digits")
     .max(6, "PIN must be 6 digits")
@@ -34,26 +34,51 @@ export default function LoginPage() {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      countryCode: "+60",
-      phoneNumber: "",
-      pin: ""
+      countryCode: "60",
+      phoneNumber: "1128532005",
+      pin: "000000"
     }
   })
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true)
     try {
-      // TODO: Implement actual login logic
-      console.log("Login data:", data)
+      const phoneNumber = `${data.countryCode}${data.phoneNumber}`
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Call our login API route
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          pin: data.pin
+        }),
+      })
 
-      // Handle successful login
-      alert("Login successful!")
+      const result = await response.json()
+
+      if (response.ok) {
+        // Console log the token from cookies
+        const cookies = document.cookie.split(';')
+        const sessionCookie = cookies.find(cookie => cookie.trim().startsWith('session='))
+        const token = sessionCookie ? sessionCookie.split('=')[1] : null
+
+        toast.success("Login successful!")
+        console.log("🔐 Session Token:", token)
+        console.log("👤 User Data:", result.user)
+        console.log("✅ Login Successful")
+
+        // Handle successful login - redirect to dashboard
+        window.location.href = "/dashboard"
+      } else {
+        toast.error(result.error || "Login failed")
+        console.error("❌ Login Error:", result.error)
+      }
     } catch (error) {
-      console.error("Login error:", error)
-      alert("Login failed. Please try again.")
+      toast.error("Login failed. Please try again.")
+      console.error("💥 Network Error:", error)
     } finally {
       setIsLoading(false)
     }
@@ -104,10 +129,10 @@ export default function LoginPage() {
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="+60">+60</SelectItem>
-                                      <SelectItem value="+1">+1</SelectItem>
-                                      <SelectItem value="+44">+44</SelectItem>
-                                      <SelectItem value="+65">+65</SelectItem>
+                                      <SelectItem value="60">+60</SelectItem>
+                                      <SelectItem value="1">+1</SelectItem>
+                                      <SelectItem value="44">+44</SelectItem>
+                                      <SelectItem value="65">+65</SelectItem>
                                     </SelectContent>
                                   </Select>
                                 </FormControl>
@@ -119,7 +144,7 @@ export default function LoginPage() {
                               <Input
                                 placeholder="123123123"
                                 {...field}
-                                maxLength={9}
+                                maxLength={11}
                                 className=""
                               />
                             </FormControl>

@@ -26,6 +26,7 @@ import { motion } from "motion/react";
 interface FormData {
   name: string;
   email: string;
+  countryCode: string;
   phoneNumber: string;
   question1: string;
   question2: string;
@@ -40,6 +41,7 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
+    countryCode: "60",
     phoneNumber: "",
     question1: "",
     question2: "",
@@ -78,10 +80,6 @@ export default function RegisterPage() {
       toast.error("Please answer question 2");
       return false;
     }
-    if (!formData.question3.trim()) {
-      toast.error("Please answer question 3");
-      return false;
-    }
     return true;
   };
 
@@ -112,12 +110,22 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
+      const fullPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`;
+      
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: fullPhoneNumber,
+          pin: formData.pin,
+          question1: formData.question1,
+          question2: formData.question2,
+          question3: formData.question3,
+        }),
       });
 
       const data = await response.json();
@@ -127,7 +135,7 @@ export default function RegisterPage() {
       }
 
       toast.success(data.isNewUser ? "Registration successful!" : "Profile completed successfully!");
-      router.push("/dashboard");
+      router.push("/login");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Registration failed");
     } finally {
@@ -193,13 +201,31 @@ export default function RegisterPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Phone Number</Label>
-                    <Input
-                      id="phoneNumber"
-                      type="tel"
-                      placeholder="+1 (555) 123-4567"
-                      value={formData.phoneNumber}
-                      onChange={(e) => updateFormData("phoneNumber", e.target.value)}
-                    />
+                    <div className="flex gap-2">
+                      <Select
+                        value={formData.countryCode}
+                        onValueChange={(value) => updateFormData("countryCode", value)}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="60">+60</SelectItem>
+                          <SelectItem value="1">+1</SelectItem>
+                          <SelectItem value="44">+44</SelectItem>
+                          <SelectItem value="65">+65</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        id="phoneNumber"
+                        type="tel"
+                        placeholder="123456789"
+                        value={formData.phoneNumber}
+                        onChange={(e) => updateFormData("phoneNumber", e.target.value.replace(/\D/g, ""))}
+                        maxLength={11}
+                        className="flex-1"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
