@@ -111,34 +111,34 @@ export function CalendarEventsList() {
               <CardContent className="p-0">
                 <div className="flex gap-0">
                   {/* Date Section */}
-                  <div className="w-28 p-4 flex flex-col items-center justify-center border-r">
+                  <div className="w-28 p-2 flex flex-col items-center justify-center border-r">
                     <Badge variant={isToday ? "default" : "outline"} className="mb-2">
                       {format(startDate, "EEE")}
                     </Badge>
-                    <div className="text-3xl font-bold">
+                    <div className="text-2xl font-bold">
                       {format(startDate, "d")}
                     </div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-xs text-muted-foreground">
                       {format(startDate, "MMM yyyy")}
                     </div>
                   </div>
 
                   {/* Content Section */}
                   <div className="flex-1 p-4">
-                    <h3 className="font-semibold text-lg mb-2 line-clamp-1">
+                    <h3 className="font-semibold text-sm mb-2 line-clamp-1">
                       {event.title}
                     </h3>
                     
                     {event.description && (
                       <>
-                        <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
+                        <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
                           {event.description}
                         </p>
                         <Separator className="mb-3" />
                       </>
                     )}
                     
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Clock className="h-4 w-4" />
                       <span>
                         {event.is_all_day
