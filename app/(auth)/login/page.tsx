@@ -108,55 +108,51 @@ export default function LoginPage() {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   {/* Phone Number Field */}
-                  <FormField
-                    control={form.control}
-                    name="phoneNumber"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <div className="flex items-start gap-2">
-                          <FormField
-                            control={form.control}
-                            name="countryCode"
-                            render={({ field }) => (
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger className="w-24">
-                                    <SelectValue placeholder="Select a country" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="60">+60</SelectItem>
-                                  <SelectItem value="1">+1</SelectItem>
-                                  <SelectItem value="44">+44</SelectItem>
-                                  <SelectItem value="65">+65</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            )}
-                          />
-                          <div className="flex-1 space-y-1">
-                            <FormField
-                              control={form.control}
-                              name="phoneNumber"
-                              render={({ field }) => (
-                                <FormControl>
-                                  <Input
-                                    placeholder="123123123"
-                                    {...field}
-                                    maxLength={11}
-                                  />
-                                </FormControl>
-                              )}
-                            />
-                            <FormMessage />
-                          </div>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <div className="flex items-start gap-2">
+                      <FormField
+                        control={form.control}
+                        name="countryCode"
+                        render={({ field }) => (
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger className="w-24">
+                                <SelectValue placeholder="Select a country" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="60">+60</SelectItem>
+                              <SelectItem value="1">+1</SelectItem>
+                              <SelectItem value="44">+44</SelectItem>
+                              <SelectItem value="65">+65</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                      <div className="flex-1">
+                        <FormField
+                          control={form.control}
+                          name="phoneNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  placeholder="123123123"
+                                  {...field}
+                                  maxLength={11}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </FormItem>
 
                   {/* PIN Field */}
                   <FormField
