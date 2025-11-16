@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { AuroraBackground } from "@/components/ui/aurora-background"
 import { motion } from "motion/react"
 import { toast } from "sonner"
+import { Suspense } from 'react'
 
 const loginSchema = z.object({
   countryCode: z.string().min(1, "Country code is required"),
@@ -29,7 +30,7 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
-export default function LoginPage() {
+function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -52,10 +53,8 @@ export default function LoginPage() {
         const phone = redirectUrl.searchParams.get('phone')
         
         if (phone) {
-          // Extract country code and phone number
-          // Assuming format like 601128532005 (60 = country code)
-          const countryCode = phone.slice(0, 2) // First 2 digits
-          const phoneNumber = phone.slice(2) // Rest of the digits
+          const countryCode = phone.slice(0, 2)
+          const phoneNumber = phone.slice(2)
           
           form.setValue('countryCode', countryCode)
           form.setValue('phoneNumber', phoneNumber)
@@ -71,7 +70,6 @@ export default function LoginPage() {
     try {
       const phoneNumber = `${data.countryCode}${data.phoneNumber}`
 
-      // Call our login API route
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -86,7 +84,6 @@ export default function LoginPage() {
       const result = await response.json()
 
       if (response.ok) {
-        // Console log the token from cookies
         const cookies = document.cookie.split(';')
         const sessionCookie = cookies.find(cookie => cookie.trim().startsWith('session='))
         const token = sessionCookie ? sessionCookie.split('=')[1] : null
@@ -96,7 +93,6 @@ export default function LoginPage() {
         console.log("👤 User Data:", result.user)
         console.log("✅ Login Successful")
 
-        // Redirect to original destination or dashboard
         const redirect = searchParams.get('redirect')
         router.push(redirect || "/dashboard")
       } else {
@@ -112,6 +108,105 @@ export default function LoginPage() {
   }
 
   return (
+    <Card className="min-w-sm mx-auto shadow-xl">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+        <CardDescription>
+          Enter your phone number and PIN to sign in
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <div className="flex items-start gap-2">
+                <FormField
+                  control={form.control}
+                  name="countryCode"
+                  render={({ field }) => (
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder="Select a country" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="60">+60</SelectItem>
+                        <SelectItem value="1">+1</SelectItem>
+                        <SelectItem value="44">+44</SelectItem>
+                        <SelectItem value="65">+65</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                <div className="flex-1">
+                  <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            placeholder="123123123"
+                            {...field}
+                            maxLength={11}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </FormItem>
+
+            <FormField
+              control={form.control}
+              name="pin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>6-Digit PIN</FormLabel>
+                  <FormControl>
+                    <InputOTP
+                      maxLength={6}
+                      value={field.value}
+                      onChange={field.onChange}
+                    >
+                      <InputOTPGroup className="gap-1">
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default function LoginPage() {
+  return (
     <AuroraBackground>
       <motion.div
         initial={{ opacity: 0.0, y: 40 }}
@@ -124,105 +219,18 @@ export default function LoginPage() {
         className="relative flex flex-col gap-4 items-center justify-center px-4"
       >
         <div className="min-h-screen flex items-center justify-center">
-          <Card className="min-w-sm mx-auto shadow-xl">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-              <CardDescription>
-                Enter your phone number and PIN to sign in
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Phone Number Field */}
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <div className="flex items-start gap-2">
-                      <FormField
-                        control={form.control}
-                        name="countryCode"
-                        render={({ field }) => (
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="w-24">
-                                <SelectValue placeholder="Select a country" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value="60">+60</SelectItem>
-                              <SelectItem value="1">+1</SelectItem>
-                              <SelectItem value="44">+44</SelectItem>
-                              <SelectItem value="65">+65</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                      <div className="flex-1">
-                        <FormField
-                          control={form.control}
-                          name="phoneNumber"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input
-                                  placeholder="123123123"
-                                  {...field}
-                                  maxLength={11}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </FormItem>
-
-                  {/* PIN Field */}
-                  <FormField
-                    control={form.control}
-                    name="pin"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>6-Digit PIN</FormLabel>
-                        <FormControl>
-                          <InputOTP
-                            maxLength={6}
-                            value={field.value}
-                            onChange={field.onChange}
-                          >
-                            <InputOTPGroup className="gap-1">
-                              <InputOTPSlot index={0} />
-                              <InputOTPSlot index={1} />
-                              <InputOTPSlot index={2} />
-                              <InputOTPSlot index={3} />
-                              <InputOTPSlot index={4} />
-                              <InputOTPSlot index={5} />
-                            </InputOTPGroup>
-                          </InputOTP>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Submit Button */}
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Signing in..." : "Sign In"}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+          <Suspense fallback={
+            <Card className="min-w-sm mx-auto shadow-xl">
+              <CardHeader className="text-center">
+                <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+                <CardDescription>Loading...</CardDescription>
+              </CardHeader>
+            </Card>
+          }>
+            <LoginForm />
+          </Suspense>
         </div>
       </motion.div>
-    </AuroraBackground >
+    </AuroraBackground>
   )
 }

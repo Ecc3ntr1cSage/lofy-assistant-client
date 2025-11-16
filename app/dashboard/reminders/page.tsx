@@ -6,7 +6,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-export default function Page() {
+export default function RemindersPage() {
   return (
     <SidebarProvider
       style={

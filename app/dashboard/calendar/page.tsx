@@ -8,7 +8,7 @@ import { CalendarEventsList } from "@/components/calendar-events-list"
 import { Calendar } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 
-export default function Page() {
+export default function CalendarPage() {
   return (
     <SidebarProvider
       style={
