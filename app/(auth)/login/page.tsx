@@ -111,45 +111,48 @@ export default function LoginPage() {
                   <FormField
                     control={form.control}
                     name="phoneNumber"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
-                        <div className="flex">
+                        <div className="flex items-start gap-2">
                           <FormField
                             control={form.control}
                             name="countryCode"
-                            render={({ field: countryField }) => (
-                              <FormItem className="w-24">
+                            render={({ field }) => (
+                              <Select
+                                onValueChange={field.onChange}
+                                defaultValue={field.value}
+                              >
                                 <FormControl>
-                                  <Select
-                                    value={countryField.value}
-                                    onValueChange={countryField.onChange}
-                                  >
-                                    <SelectTrigger>
-                                      <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value="60">+60</SelectItem>
-                                      <SelectItem value="1">+1</SelectItem>
-                                      <SelectItem value="44">+44</SelectItem>
-                                      <SelectItem value="65">+65</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                                  <SelectTrigger className="w-24">
+                                    <SelectValue placeholder="Select a country" />
+                                  </SelectTrigger>
                                 </FormControl>
-                              </FormItem>
+                                <SelectContent>
+                                  <SelectItem value="60">+60</SelectItem>
+                                  <SelectItem value="1">+1</SelectItem>
+                                  <SelectItem value="44">+44</SelectItem>
+                                  <SelectItem value="65">+65</SelectItem>
+                                </SelectContent>
+                              </Select>
                             )}
                           />
-                          <FormItem className="flex-1">
-                            <FormControl>
-                              <Input
-                                placeholder="123123123"
-                                {...field}
-                                maxLength={11}
-                                className=""
-                              />
-                            </FormControl>
+                          <div className="flex-1 space-y-1">
+                            <FormField
+                              control={form.control}
+                              name="phoneNumber"
+                              render={({ field }) => (
+                                <FormControl>
+                                  <Input
+                                    placeholder="123123123"
+                                    {...field}
+                                    maxLength={11}
+                                  />
+                                </FormControl>
+                              )}
+                            />
                             <FormMessage />
-                          </FormItem>
+                          </div>
                         </div>
                       </FormItem>
                     )}
@@ -167,7 +170,6 @@ export default function LoginPage() {
                             maxLength={6}
                             value={field.value}
                             onChange={field.onChange}
-                            className=""
                           >
                             <InputOTPGroup className="gap-1">
                               <InputOTPSlot index={0} />

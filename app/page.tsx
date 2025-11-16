@@ -80,19 +80,23 @@ export default function Home() {
               </div>
             </div>
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
-              <Button asChild
-                size="lg"
-                className="text-lg text-secondary px-8 py-6 bg-linear-to-r from-emerald-600/80 to-indigo-600/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-              >
-                <Link href="/auth/register">🤖 Try Lofy Now</Link>
-              </Button>
-              <Button asChild
-                variant="link"
-                size="lg"
-                className="text-lg px-8 py-6  transition-all duration-300 hover:scale-105 text-muted-foreground"
-              >
-                <Link href="/auth/login">Learn More</Link>
-              </Button>
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  className="text-lg text-secondary px-8 py-6 bg-linear-to-r from-emerald-600/80 to-indigo-600/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                >
+                  🤖 Try Lofy Now
+                </Button>
+              </Link>
+              <Link href="/login">
+                <Button
+                  variant="link"
+                  size="lg"
+                  className="text-lg px-8 py-6  transition-all duration-300 hover:scale-105 text-muted-foreground"
+                >
+                  Learn More
+                </Button>
+              </Link>
             </div>
             <div className="mt-6 flex items-center gap-6 text-sm text-gray-500">
               <div className="flex items-center gap-2">
@@ -529,12 +533,14 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <Button
-                size="lg"
-                className="text-xl px-12 py-8 bg-white text-blue-600 hover:bg-gray-50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 font-semibold"
-              >
-                🚀 Start Free Trial
-              </Button>
+              <Link href="/register">
+                <Button
+                  size="lg"
+                  className="text-xl px-12 py-8 bg-white text-blue-600 hover:bg-gray-50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 font-semibold"
+                >
+                  🚀 Start Free Trial
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"
