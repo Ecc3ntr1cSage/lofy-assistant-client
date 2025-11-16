@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, Clock, Loader2 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { TracingBeam } from "@/components/ui/tracing-beam"
 
 interface CalendarEvent {
   id: number
@@ -97,7 +98,8 @@ export function CalendarEventsList() {
   }
 
   return (
-    <div className="">
+
+    <TracingBeam>
       {events.map((event) => {
         const startDate = new Date(event.start_time)
         const endDate = new Date(event.end_time)
@@ -151,6 +153,6 @@ export function CalendarEventsList() {
           </Link>
         )
       })}
-    </div>
+    </TracingBeam>
   )
 }
