@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -30,15 +31,40 @@ type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       countryCode: "60",
-      phoneNumber: "1128532005",
-      pin: "000000"
+      phoneNumber: "",
+      pin: ""
     }
   })
+
+  // Pre-fill phone number from redirect URL if present
+  useEffect(() => {
+    const redirect = searchParams.get('redirect')
+    if (redirect) {
+      try {
+        const redirectUrl = new URL(redirect, window.location.origin)
+        const phone = redirectUrl.searchParams.get('phone')
+        
+        if (phone) {
+          // Extract country code and phone number
+          // Assuming format like 601128532005 (60 = country code)
+          const countryCode = phone.slice(0, 2) // First 2 digits
+          const phoneNumber = phone.slice(2) // Rest of the digits
+          
+          form.setValue('countryCode', countryCode)
+          form.setValue('phoneNumber', phoneNumber)
+        }
+      } catch (error) {
+        console.error("Error parsing redirect URL:", error)
+      }
+    }
+  }, [searchParams, form])
 
   const onSubmit = async (data: LoginFormValues) => {
     setIsLoading(true)
@@ -70,8 +96,9 @@ export default function LoginPage() {
         console.log("👤 User Data:", result.user)
         console.log("✅ Login Successful")
 
-        // Handle successful login - redirect to dashboard
-        window.location.href = "/dashboard"
+        // Redirect to original destination or dashboard
+        const redirect = searchParams.get('redirect')
+        router.push(redirect || "/dashboard")
       } else {
         toast.error(result.error || "Login failed")
         console.error("❌ Login Error:", result.error)

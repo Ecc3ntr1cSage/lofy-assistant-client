@@ -13,6 +13,7 @@ import {
   IconHelp,
   IconInnerShadowTop,
   IconListDetails,
+  IconLogout,
   IconReport,
   IconSearch,
   IconSettings,
@@ -129,6 +130,11 @@ const data = {
       title: "Search",
       url: "#",
       icon: IconSearch,
+    },
+    {
+      title: "Logout",
+      url: "/logout",
+      icon: IconLogout,
     },
   ],
   documents: [
