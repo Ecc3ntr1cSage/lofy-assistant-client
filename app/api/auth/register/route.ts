@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/lib/generated/prisma";
 import { randomUUID } from "crypto";
 
 export const runtime = 'nodejs'
@@ -22,7 +23,26 @@ async function encryptPhone(phone: string): Promise<string> {
 
 export async function POST(request: NextRequest) {
   try {
-    let { phone, phoneNumber, pin, name, email, question1, question2, question3 } = await request.json();
+    const body = await request.json();
+    const {
+      phone,
+      phoneNumber,
+      pin,
+      name,
+      email,
+      question1,
+      question2,
+      question3
+    }: {
+      phone?: string;
+      phoneNumber?: string;
+      pin?: string;
+      name?: string;
+      email?: string;
+      question1?: string;
+      question2?: string;
+      question3?: string;
+    } = body;
 
     // Handle both 'phone' and 'phoneNumber' fields
     const phoneValue = phone || phoneNumber;
@@ -67,9 +87,9 @@ export async function POST(request: NextRequest) {
     // Prepare metadata with onboarding answers if provided
     const metadata = (question1 || question2 || question3) ? {
       onboarding: {
-        question1: question1 || null,
-        question2: question2 || null,
-        question3: question3 || null,
+        question1: question1 || "",
+        question2: question2 || "",
+        question3: question3 || "",
         completedAt: new Date().toISOString()
       }
     } : null;
@@ -86,15 +106,17 @@ export async function POST(request: NextRequest) {
       }
 
       // User exists (partial registration from FastAPI) - update to complete profile
+      const updateData = {
+        name,
+        pin: hashedPin,
+        encrypted_phone: encryptedPhone,
+        email: email || existingUser.email,
+        ...(metadata && { metadata }),
+      };
+
       const updatedUser = await prisma.users.update({
         where: { id: existingUser.id },
-        data: {
-          name,
-          pin: hashedPin,
-          encrypted_phone: encryptedPhone,
-          email: email || existingUser.email,
-          metadata: metadata || existingUser.metadata,
-        },
+        data: updateData,
       });
 
       return NextResponse.json(
@@ -121,8 +143,8 @@ export async function POST(request: NextRequest) {
           encrypted_phone: encryptedPhone,
           pin: hashedPin,
           email: email || null,
-          role: 1, // Default user role
-          metadata: metadata,
+          role: 1,
+          ...(metadata && { metadata }),
         },
       });
 

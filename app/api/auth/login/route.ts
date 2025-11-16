@@ -7,10 +7,10 @@ export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
     try {
-        let { phone, pin }: { phone: string; pin: string } = await request.json()
+        const { phone: rawPhone, pin }: { phone: string; pin: string } = await request.json()
 
         // Normalize phone: remove all non-digits including '+'
-        phone = phone.replace(/\D/g, "")
+        const phone = rawPhone.replace(/\D/g, "")
 
         if (!phone || !pin || !/^\d{6}$/.test(pin)) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
