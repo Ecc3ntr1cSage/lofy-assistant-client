@@ -5,8 +5,8 @@ import {
   IconListCheck,
   IconCalendarWeek,
   IconClock12,
-  IconBrain,IconVolume
-
+  IconBrain,
+  IconVolume,
 } from "@tabler/icons-react";
 
 export function BentoFeatures() {
@@ -20,7 +20,6 @@ export function BentoFeatures() {
           header={item.header}
           icon={item.icon}
           className={item.className}
-
         />
       ))}
     </BentoGrid>
@@ -62,7 +61,7 @@ const items = [
     icon: <IconListCheck className="h-6 w-6 text-neutral-500" />,
     className: "lg:col-span-3 md:col-span-4",
   },
-    {
+  {
     title: "Voice Content Extraction",
     description:
       "Record meetings or voice notes for high-accuracy transcription. Instantly transform spoken content into your desired output, including smart summaries or clear action plans.",

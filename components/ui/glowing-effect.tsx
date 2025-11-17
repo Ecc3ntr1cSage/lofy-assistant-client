@@ -15,7 +15,9 @@ interface GlowingEffectProps {
   disabled?: boolean;
   movementDuration?: number;
   borderWidth?: number;
+  children?: React.ReactNode;
 }
+
 const GlowingEffect = memo(
   ({
     blur = 0,
@@ -28,6 +30,7 @@ const GlowingEffect = memo(
     movementDuration = 2,
     borderWidth = 1,
     disabled = true,
+    children,
   }: GlowingEffectProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const lastPosition = useRef({ x: 0, y: 0 });
@@ -118,7 +121,8 @@ const GlowingEffect = memo(
     }, [handleMove, disabled]);
 
     return (
-      <>
+      <div className="relative rounded-[inherit]">
+        {children}
         <div
           className={cn(
             "pointer-events-none absolute -inset-px hidden rounded-[inherit] border opacity-0 transition-opacity",
@@ -180,7 +184,7 @@ const GlowingEffect = memo(
             )}
           />
         </div>
-      </>
+      </div>
     );
   }
 );

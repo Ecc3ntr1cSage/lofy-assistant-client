@@ -1,74 +1,99 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { AuroraBackground } from "@/components/ui/aurora-background"
-import { motion } from "motion/react"
-import { toast } from "sonner"
-import { Suspense } from 'react'
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "motion/react";
+import { toast } from "sonner";
+import { Suspense } from "react";
 
 const loginSchema = z.object({
   countryCode: z.string().min(1, "Country code is required"),
-  phoneNumber: z.string()
+  phoneNumber: z
+    .string()
     .min(8, "Phone number must be valid")
     .max(15, "Phone number must be valid")
     .regex(/^\d{8,15}$/, "Phone number must contain only digits"),
-  pin: z.string()
+  pin: z
+    .string()
     .min(6, "PIN must be 6 digits")
     .max(6, "PIN must be 6 digits")
-    .regex(/^\d{6}$/, "PIN must contain only digits")
-})
+    .regex(/^\d{6}$/, "PIN must contain only digits"),
+});
 
-type LoginFormValues = z.infer<typeof loginSchema>
+type LoginFormValues = z.infer<typeof loginSchema>;
 
 function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       countryCode: "60",
       phoneNumber: "",
-      pin: ""
-    }
-  })
+      pin: "",
+    },
+  });
 
   // Pre-fill phone number from redirect URL if present
   useEffect(() => {
-    const redirect = searchParams.get('redirect')
+    const redirect = searchParams.get("redirect");
     if (redirect) {
       try {
-        const redirectUrl = new URL(redirect, window.location.origin)
-        const phone = redirectUrl.searchParams.get('phone')
-        
+        const redirectUrl = new URL(redirect, window.location.origin);
+        const phone = redirectUrl.searchParams.get("phone");
+
         if (phone) {
-          const countryCode = phone.slice(0, 2)
-          const phoneNumber = phone.slice(2)
-          
-          form.setValue('countryCode', countryCode)
-          form.setValue('phoneNumber', phoneNumber)
+          const countryCode = phone.slice(0, 2);
+          const phoneNumber = phone.slice(2);
+
+          form.setValue("countryCode", countryCode);
+          form.setValue("phoneNumber", phoneNumber);
         }
       } catch (error) {
-        console.error("Error parsing redirect URL:", error)
+        console.error("Error parsing redirect URL:", error);
       }
     }
-  }, [searchParams, form])
+  }, [searchParams, form]);
 
   const onSubmit = async (data: LoginFormValues) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const phoneNumber = `${data.countryCode}${data.phoneNumber}`
+      const phoneNumber = `${data.countryCode}${data.phoneNumber}`;
 
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -77,38 +102,40 @@ function LoginForm() {
         },
         body: JSON.stringify({
           phone: phoneNumber,
-          pin: data.pin
+          pin: data.pin,
         }),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (response.ok) {
-        const cookies = document.cookie.split(';')
-        const sessionCookie = cookies.find(cookie => cookie.trim().startsWith('session='))
-        const token = sessionCookie ? sessionCookie.split('=')[1] : null
+        const cookies = document.cookie.split(";");
+        const sessionCookie = cookies.find((cookie) =>
+          cookie.trim().startsWith("session=")
+        );
+        const token = sessionCookie ? sessionCookie.split("=")[1] : null;
 
-        toast.success("Login successful!")
-        console.log("🔐 Session Token:", token)
-        console.log("👤 User Data:", result.user)
-        console.log("✅ Login Successful")
+        toast.success("Login successful!");
+        console.log("🔐 Session Token:", token);
+        console.log("👤 User Data:", result.user);
+        console.log("✅ Login Successful");
 
-        const redirect = searchParams.get('redirect')
-        router.push(redirect || "/dashboard")
+        const redirect = searchParams.get("redirect");
+        router.push(redirect || "/dashboard");
       } else {
-        toast.error(result.error || "Login failed")
-        console.error("❌ Login Error:", result.error)
+        toast.error(result.error || "Login failed");
+        console.error("❌ Login Error:", result.error);
       }
     } catch (error) {
-      toast.error("Login failed. Please try again.")
-      console.error("💥 Network Error:", error)
+      toast.error("Login failed. Please try again.");
+      console.error("💥 Network Error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
-    <Card className="min-w-sm mx-auto shadow-xl">
+    <Card className="min-w-sm mx-auto shadow-xl rounded-xl p-4">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
         <CardDescription>
@@ -191,18 +218,14 @@ function LoginForm() {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Signing in..." : "Sign In"}
             </Button>
           </form>
         </Form>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function LoginPage() {
@@ -219,18 +242,22 @@ export default function LoginPage() {
         className="relative flex flex-col gap-4 items-center justify-center px-4"
       >
         <div className="min-h-screen flex items-center justify-center">
-          <Suspense fallback={
-            <Card className="min-w-sm mx-auto shadow-xl">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-                <CardDescription>Loading...</CardDescription>
-              </CardHeader>
-            </Card>
-          }>
+          <Suspense
+            fallback={
+              <Card className="min-w-sm mx-auto shadow-xl rounded-xl">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl font-bold">
+                    Welcome Back
+                  </CardTitle>
+                  <CardDescription>Loading...</CardDescription>
+                </CardHeader>
+              </Card>
+            }
+          >
             <LoginForm />
           </Suspense>
         </div>
       </motion.div>
     </AuroraBackground>
-  )
+  );
 }

@@ -1,64 +1,78 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { format } from "date-fns"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Calendar, Clock, Loader2 } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
-import { TracingBeam } from "@/components/ui/tracing-beam"
+import { useEffect, useState } from "react";
+import { format } from "date-fns";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Clock, Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import { CalendarEventDialog } from "@/components/calendar-event-dialog";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 interface CalendarEvent {
-  id: number
-  title: string
-  description: string | null
-  start_time: string
-  end_time: string
-  is_all_day: boolean
+  id: number;
+  title: string;
+  description: string | null;
+  start_time: string;
+  end_time: string;
+  is_all_day: boolean;
 }
 
 export function CalendarEventsList() {
-  const [events, setEvents] = useState<CalendarEvent[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
+    null
+  );
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await fetch("/api/calendar", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Failed to fetch events:", response.status, errorData);
+        throw new Error(
+          errorData.error || `Failed to fetch events (${response.status})`
+        );
+      }
+
+      const data = await response.json();
+
+      if (!data.events) {
+        throw new Error("Invalid response format");
+      }
+
+      setEvents(data.events);
+    } catch (err) {
+      console.error("Error fetching calendar events:", err);
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function fetchEvents() {
-      try {
-        const response = await fetch("/api/calendar", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        })
-        
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}))
-          console.error("Failed to fetch events:", response.status, errorData)
-          throw new Error(
-            errorData.error || `Failed to fetch events (${response.status})`
-          )
-        }
+    fetchEvents();
+  }, []);
 
-        const data = await response.json()
-        
-        if (!data.events) {
-          throw new Error("Invalid response format")
-        }
-        
-        setEvents(data.events)
-      } catch (err) {
-        console.error("Error fetching calendar events:", err)
-        setError(err instanceof Error ? err.message : "An error occurred")
-      } finally {
-        setLoading(false)
-      }
-    }
+  const handleEventClick = (event: CalendarEvent) => {
+    setSelectedEvent(event);
+    setDialogOpen(true);
+  };
 
-    fetchEvents()
-  }, [])
+  const handleUpdate = () => {
+    fetchEvents();
+  };
 
   if (loading) {
     return (
@@ -70,7 +84,7 @@ export function CalendarEventsList() {
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (error) {
@@ -81,7 +95,7 @@ export function CalendarEventsList() {
           <p className="text-center text-destructive">{error}</p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (events.length === 0) {
@@ -94,65 +108,93 @@ export function CalendarEventsList() {
           </p>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
+    <div className="flex flex-row ">
+      <TracingBeam>
+        {events.map((event) => {
+          const startDate = new Date(event.start_time);
+          const endDate = new Date(event.end_time);
+          const isToday =
+            format(startDate, "yyyy-MM-dd") ===
+            format(new Date(), "yyyy-MM-dd");
 
-    <TracingBeam>
-      {events.map((event) => {
-        const startDate = new Date(event.start_time)
-        const endDate = new Date(event.end_time)
-        const isToday = format(startDate, "yyyy-MM-dd") === format(new Date(), "yyyy-MM-dd")
-        
-        return (
-          <Link key={event.id} href={`/dashboard/calendar/${event.id}`}>
-            <Card className="transition-all hover:shadow-md hover:border-primary/50 mt-2">
-              <CardContent className="p-0">
-                <div className="flex gap-0">
-                  {/* Date Section */}
-                  <div className="w-28 p-2 flex flex-col items-center justify-center border-r">
-                    <Badge variant={isToday ? "default" : "outline"} className="mb-2">
-                      {format(startDate, "EEE")}
-                    </Badge>
-                    <div className="text-2xl font-bold">
-                      {format(startDate, "d")}
+          return (
+            <GlowingEffect
+              key={event.id}
+              blur={0}
+              borderWidth={2}
+              spread={40}
+              glow={true}
+              disabled={false}
+              proximity={64}
+              inactiveZone={0.01}
+            >
+              <Card
+                className="transition-all my-4 cursor-pointer rounded-xl"
+                onClick={() => handleEventClick(event)}
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center gap-2">
+                    {/* Date Section */}
+                    <div className="w-24 flex flex-col items-center justify-center border-r">
+                      <Badge
+                        variant={isToday ? "default" : "outline"}
+                        className="mb-2"
+                      >
+                        {format(startDate, "EEE")}
+                      </Badge>
+                      <div className="text-2xl font-bold">
+                        {format(startDate, "d")}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {format(startDate, "MMM yyyy")}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
-                      {format(startDate, "MMM yyyy")}
+
+                    {/* Content Section */}
+                    <div className="flex-1 p-2">
+                      <h3 className="font-semibold text-sm mb-2 line-clamp-1">
+                        {event.title}
+                      </h3>
+
+                      {event.description && (
+                        <>
+                          <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                            {event.description}
+                          </p>
+                          <Separator className="mb-3" />
+                        </>
+                      )}
+
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <Clock className="h-4 w-4" />
+                        <span>
+                          {event.is_all_day
+                            ? "All day"
+                            : `${format(startDate, "h:mm a")} - ${format(
+                                endDate,
+                                "h:mm a"
+                              )}`}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </GlowingEffect>
+          );
+        })}
+      </TracingBeam>
 
-                  {/* Content Section */}
-                  <div className="flex-1 p-4">
-                    <h3 className="font-semibold text-sm mb-2 line-clamp-1">
-                      {event.title}
-                    </h3>
-                    
-                    {event.description && (
-                      <>
-                        <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
-                          {event.description}
-                        </p>
-                        <Separator className="mb-3" />
-                      </>
-                    )}
-                    
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="h-4 w-4" />
-                      <span>
-                        {event.is_all_day
-                          ? "All day"
-                          : `${format(startDate, "h:mm a")} - ${format(endDate, "h:mm a")}`}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        )
-      })}
-    </TracingBeam>
-  )
+      <CalendarEventDialog
+        event={selectedEvent}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onUpdate={handleUpdate}
+      />
+    </div>
+  );
 }
