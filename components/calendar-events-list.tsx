@@ -119,7 +119,7 @@ export function CalendarEventsList() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-12 w-12 animate-spin text-muted-foreground mb-4" />
+          <Loader2 className="w-12 h-12 mb-4 animate-spin text-muted-foreground" />
           <p className="text-center text-muted-foreground">
             Loading calendar events...
           </p>
@@ -132,7 +132,7 @@ export function CalendarEventsList() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Calendar className="h-12 w-12 text-destructive mb-4" />
+          <Calendar className="w-12 h-12 mb-4 text-destructive" />
           <p className="text-center text-destructive">{error}</p>
         </CardContent>
       </Card>
@@ -145,7 +145,7 @@ export function CalendarEventsList() {
       <Card>
         <CardContent className="flex items-center gap-4 p-4">
           <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-muted-foreground" />
+            <Calendar className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by:</span>
           </div>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
@@ -179,7 +179,7 @@ export function CalendarEventsList() {
       {events.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+            <Calendar className="w-12 h-12 mb-4 text-muted-foreground" />
             <p className="text-center text-muted-foreground">
               No calendar events found for{" "}
               {months[parseInt(selectedMonth) - 1]?.label} {selectedYear}
@@ -209,13 +209,13 @@ export function CalendarEventsList() {
                   className="rounded-xl"
                 >
                   <Card
-                    className="transition-all my-4 cursor-pointer rounded-xl"
+                    className="my-4 transition-all cursor-pointer rounded-xl"
                     onClick={() => handleEventClick(event)}
                   >
                     <CardContent className="p-0">
                       <div className="flex items-center gap-2">
                         {/* Date Section */}
-                        <div className="w-24 flex flex-col items-center justify-center border-r">
+                        <div className="flex flex-col items-center justify-center w-24 border-r">
                           <Badge
                             variant={isToday ? "default" : "outline"}
                             className="mb-2"
@@ -232,13 +232,13 @@ export function CalendarEventsList() {
 
                         {/* Content Section */}
                         <div className="flex-1 p-2">
-                          <h3 className="font-semibold text-sm mb-2 line-clamp-1">
+                          <h3 className="mb-2 text-sm font-semibold line-clamp-1">
                             {event.title}
                           </h3>
 
                           {event.description && (
                             <>
-                              <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
+                              <p className="mb-3 text-xs text-muted-foreground line-clamp-2">
                                 {event.description}
                               </p>
                               <Separator className="mb-3" />
@@ -246,7 +246,7 @@ export function CalendarEventsList() {
                           )}
 
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="w-4 h-4" />
                             <span>
                               {event.is_all_day
                                 ? "All day"

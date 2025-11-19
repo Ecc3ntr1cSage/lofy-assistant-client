@@ -37,7 +37,7 @@ const GlowingEffect = memo(
     const animationFrameRef = useRef<number>(0);
 
     const handleMove = useCallback(
-      (e?: MouseEvent | { x: number; y: number }) => {
+      (e?: PointerEvent | { x: number; y: number }) => {
         if (!containerRef.current) return;
 
         if (animationFrameRef.current) {
@@ -91,7 +91,7 @@ const GlowingEffect = memo(
           animate(currentAngle, newAngle, {
             duration: movementDuration,
             ease: [0.16, 1, 0.3, 1],
-            onUpdate: (value) => {
+            onUpdate: (value: number) => {
               element.style.setProperty("--start", String(value));
             },
           });
@@ -174,13 +174,13 @@ const GlowingEffect = memo(
             className={cn(
               "glow",
               "rounded-[15px]",
-              'after:content-[""] after:rounded-[15px] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]',
-              "after:[border:var(--glowingeffect-border-width)_solid_transparent]",
-              "after:[background:var(--gradient)] after:[background-attachment:fixed]",
-              "after:opacity-[var(--active)] after:transition-opacity after:duration-300",
+              "after:content-[''] after:rounded-[15px] after:absolute after:inset-[calc(-1*(--glowingeffect-border-width))]",
+              "after:[border:(--glowingeffect-border-width)_solid_transparent]",
+              "after:[background:(--gradient)] after:[background-attachment:fixed]",
+              "after:[opacity:(--active)] after:transition-opacity after:duration-300",
               "after:[mask-clip:padding-box,border-box]",
               "after:[mask-composite:intersect]",
-              "after:[mask-image:linear-gradient(#0000,#0000),conic-gradient(from_calc((var(--start)-var(--spread))*1deg),#00000000_0deg,#fff,#00000000_calc(var(--spread)*2deg))]"
+              "after:[mask-image:linear-gradient(#0000,#0000),conic-gradient(from_calc(((--start)-(--spread))*1deg),#00000000_0deg,#fff,#00000000_calc((--spread)*2deg))]"
             )}
           />
         </div>
