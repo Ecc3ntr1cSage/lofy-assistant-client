@@ -121,11 +121,11 @@ const GlowingEffect = memo(
     }, [handleMove, disabled]);
 
     return (
-      <div className="relative rounded-[inherit]">
+      <div className="relative rounded-[15px]">
         {children}
         <div
           className={cn(
-            "pointer-events-none absolute -inset-px hidden rounded-[inherit] border opacity-0 transition-opacity",
+            "pointer-events-none absolute -inset-px hidden rounded-[15px] border opacity-0 transition-opacity",
             glow && "opacity-100",
             variant === "white" && "border-white",
             disabled && "!block"
@@ -163,9 +163,9 @@ const GlowingEffect = memo(
             } as React.CSSProperties
           }
           className={cn(
-            "pointer-events-none absolute inset-0 rounded-[inherit] opacity-100 transition-opacity",
+            "pointer-events-none absolute inset-0 rounded-[15px] opacity-100 transition-opacity",
             glow && "opacity-100",
-            blur > 0 && "blur-[var(--blur)] ",
+            blur > 0 && "blur-[var(--blur)]",
             className,
             disabled && "!hidden"
           )}
@@ -173,8 +173,8 @@ const GlowingEffect = memo(
           <div
             className={cn(
               "glow",
-              "rounded-[inherit]",
-              'after:content-[""] after:rounded-[inherit] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]',
+              "rounded-[15px]",
+              'after:content-[""] after:rounded-[15px] after:absolute after:inset-[calc(-1*var(--glowingeffect-border-width))]',
               "after:[border:var(--glowingeffect-border-width)_solid_transparent]",
               "after:[background:var(--gradient)] after:[background-attachment:fixed]",
               "after:opacity-[var(--active)] after:transition-opacity after:duration-300",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +44,7 @@ export function CalendarEventsList() {
     currentDate.getFullYear().toString()
   );
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     try {
       const params = new URLSearchParams({
         month: selectedMonth,
@@ -80,11 +80,11 @@ export function CalendarEventsList() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     fetchEvents();
-  }, [selectedMonth, selectedYear]);
+  }, [fetchEvents]);
 
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedEvent(event);
@@ -206,6 +206,7 @@ export function CalendarEventsList() {
                   disabled={false}
                   proximity={64}
                   inactiveZone={0.01}
+                  className="rounded-xl"
                 >
                   <Card
                     className="transition-all my-4 cursor-pointer rounded-xl"
