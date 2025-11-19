@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { format } from "date-fns";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Loader2 } from "lucide-react";
+import { Plus, Bell, Clock, Loader2 } from "lucide-react";
+import { ReminderFormDialog } from "@/components/reminder-form-dialog";
+import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { TracingBeam } from "@/components/ui/tracing-beam";
-import { CalendarEventDialog } from "@/components/calendar-event-dialog";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import {
   Select,
@@ -17,23 +18,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface CalendarEvent {
+interface Reminder {
   id: number;
-  title: string;
-  description: string | null;
-  start_time: string;
-  end_time: string;
-  is_all_day: boolean;
+  message: string;
+  reminder_time: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export function CalendarEventsList() {
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+export function ReminderList() {
+  const [reminders, setReminders] = useState<Reminder[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null
-  );
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingReminder, setEditingReminder] = useState<Reminder | null>(null);
 
   // Filter state
   const currentDate = new Date();
@@ -44,14 +43,15 @@ export function CalendarEventsList() {
     currentDate.getFullYear().toString()
   );
 
-  const fetchEvents = async () => {
+  const fetchReminders = async () => {
     try {
+      setLoading(true);
       const params = new URLSearchParams({
         month: selectedMonth,
         year: selectedYear,
       });
 
-      const response = await fetch(`/api/calendar?${params.toString()}`, {
+      const response = await fetch(`/api/reminder?${params.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -61,21 +61,21 @@ export function CalendarEventsList() {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error("Failed to fetch events:", response.status, errorData);
+        console.error("Failed to fetch reminders:", response.status, errorData);
         throw new Error(
-          errorData.error || `Failed to fetch events (${response.status})`
+          errorData.error || `Failed to fetch reminders (${response.status})`
         );
       }
 
       const data = await response.json();
 
-      if (!data.events) {
+      if (!data.reminders) {
         throw new Error("Invalid response format");
       }
 
-      setEvents(data.events);
+      setReminders(data.reminders);
     } catch (err) {
-      console.error("Error fetching calendar events:", err);
+      console.error("Error fetching reminders:", err);
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
       setLoading(false);
@@ -83,16 +83,31 @@ export function CalendarEventsList() {
   };
 
   useEffect(() => {
-    fetchEvents();
+    fetchReminders();
   }, [selectedMonth, selectedYear]);
 
-  const handleEventClick = (event: CalendarEvent) => {
-    setSelectedEvent(event);
-    setDialogOpen(true);
+  const handleReminderClick = (reminder: Reminder) => {
+    setEditingReminder(reminder);
+    setIsDialogOpen(true);
   };
 
-  const handleUpdate = () => {
-    fetchEvents();
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setEditingReminder(null);
+    fetchReminders();
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "default";
+      case "completed":
+        return "secondary";
+      case "cancelled":
+        return "outline";
+      default:
+        return "default";
+    }
   };
 
   // Generate month options
@@ -121,7 +136,7 @@ export function CalendarEventsList() {
         <CardContent className="flex flex-col items-center justify-center py-12">
           <Loader2 className="h-12 w-12 animate-spin text-muted-foreground mb-4" />
           <p className="text-center text-muted-foreground">
-            Loading calendar events...
+            Loading reminders...
           </p>
         </CardContent>
       </Card>
@@ -132,7 +147,7 @@ export function CalendarEventsList() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Calendar className="h-12 w-12 text-destructive mb-4" />
+          <Bell className="h-12 w-12 text-destructive mb-4" />
           <p className="text-center text-destructive">{error}</p>
         </CardContent>
       </Card>
@@ -145,7 +160,7 @@ export function CalendarEventsList() {
       <Card>
         <CardContent className="flex items-center gap-4 p-4">
           <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-muted-foreground" />
+            <Bell className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by:</span>
           </div>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
@@ -172,16 +187,22 @@ export function CalendarEventsList() {
               ))}
             </SelectContent>
           </Select>
+          <div className="ml-auto">
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Reminder
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Events List */}
-      {events.length === 0 ? (
+      {/* Reminders List */}
+      {reminders.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
+            <Bell className="h-12 w-12 text-muted-foreground mb-4" />
             <p className="text-center text-muted-foreground">
-              No calendar events found for{" "}
+              No reminders found for{" "}
               {months[parseInt(selectedMonth) - 1]?.label} {selectedYear}
             </p>
           </CardContent>
@@ -189,16 +210,15 @@ export function CalendarEventsList() {
       ) : (
         <div className="flex flex-row">
           <TracingBeam>
-            {events.map((event) => {
-              const startDate = new Date(event.start_time);
-              const endDate = new Date(event.end_time);
+            {reminders.map((reminder) => {
+              const reminderDate = new Date(reminder.reminder_time);
               const isToday =
-                format(startDate, "yyyy-MM-dd") ===
+                format(reminderDate, "yyyy-MM-dd") ===
                 format(new Date(), "yyyy-MM-dd");
 
               return (
                 <GlowingEffect
-                  key={event.id}
+                  key={reminder.id}
                   blur={0}
                   borderWidth={2}
                   spread={40}
@@ -209,7 +229,7 @@ export function CalendarEventsList() {
                 >
                   <Card
                     className="transition-all my-4 cursor-pointer rounded-xl"
-                    onClick={() => handleEventClick(event)}
+                    onClick={() => handleReminderClick(reminder)}
                   >
                     <CardContent className="p-0">
                       <div className="flex items-center gap-2">
@@ -219,41 +239,35 @@ export function CalendarEventsList() {
                             variant={isToday ? "default" : "outline"}
                             className="mb-2"
                           >
-                            {format(startDate, "EEE")}
+                            {format(reminderDate, "EEE")}
                           </Badge>
                           <div className="text-2xl font-bold">
-                            {format(startDate, "d")}
+                            {format(reminderDate, "d")}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {format(startDate, "MMM yyyy")}
+                            {format(reminderDate, "MMM yyyy")}
                           </div>
                         </div>
 
                         {/* Content Section */}
                         <div className="flex-1 p-2">
-                          <h3 className="font-semibold text-sm mb-2 line-clamp-1">
-                            {event.title}
-                          </h3>
+                          <div className="flex items-start justify-between mb-2">
+                            <h3 className="font-semibold text-sm line-clamp-2 flex-1">
+                              {reminder.message}
+                            </h3>
+                            <Badge
+                              variant={getStatusColor(reminder.status)}
+                              className="ml-2"
+                            >
+                              {reminder.status}
+                            </Badge>
+                          </div>
 
-                          {event.description && (
-                            <>
-                              <p className="text-xs text-muted-foreground mb-3 line-clamp-2">
-                                {event.description}
-                              </p>
-                              <Separator className="mb-3" />
-                            </>
-                          )}
+                          <Separator className="mb-3" />
 
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Clock className="h-4 w-4" />
-                            <span>
-                              {event.is_all_day
-                                ? "All day"
-                                : `${format(startDate, "h:mm a")} - ${format(
-                                    endDate,
-                                    "h:mm a"
-                                  )}`}
-                            </span>
+                            <span>{format(reminderDate, "h:mm a")}</span>
                           </div>
                         </div>
                       </div>
@@ -264,11 +278,11 @@ export function CalendarEventsList() {
             })}
           </TracingBeam>
 
-          <CalendarEventDialog
-            event={selectedEvent}
-            open={dialogOpen}
-            onOpenChange={setDialogOpen}
-            onUpdate={handleUpdate}
+          <ReminderFormDialog
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            onClose={handleDialogClose}
+            reminder={editingReminder}
           />
         </div>
       )}

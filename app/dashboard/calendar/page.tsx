@@ -1,12 +1,9 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-import { CalendarEventsList } from "@/components/calendar-events-list"
-import { Calendar } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { CalendarEventsList } from "@/components/calendar-events-list";
+import { Calendar } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 export default function CalendarPage() {
   return (
@@ -27,7 +24,7 @@ export default function CalendarPage() {
               <div className="px-4 lg:px-6 mx-auto w-full max-w-5xl">
                 <div className="flex items-center gap-3 mb-2">
                   <Calendar className="h-8 w-8" />
-                  <h1 className="text-3xl font-bold">Calendar Events</h1>
+                  <h1 className="text-2xl font-bold">Calendar Events</h1>
                 </div>
                 <p className="text-muted-foreground mb-6">
                   View and manage your upcoming events
@@ -40,5 +37,5 @@ export default function CalendarPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

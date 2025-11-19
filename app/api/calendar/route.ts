@@ -1,52 +1,80 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
-import { verifySession } from "@/lib/session"
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { verifySession } from "@/lib/session";
+
+// Helper: build date filter if month/year provided
+const buildDateFilter = (month?: string | null, year?: string | null) => {
+    if (!month || !year) return {};
+
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+
+    const startDate = new Date(yearNum, monthNum - 1, 1);
+    const endDate = new Date(yearNum, monthNum, 0, 23, 59, 59, 999);
+
+    return {
+        OR: [
+            // Events starting inside the month
+            { start_time: { gte: startDate, lte: endDate } },
+
+            // Events ending inside the month
+            { end_time: { gte: startDate, lte: endDate } },
+
+            // Events spanning across the entire month
+            {
+                AND: [
+                    { start_time: { lt: startDate } },
+                    { end_time: { gt: endDate } },
+                ],
+            },
+        ],
+    };
+};
 
 export async function GET(request: NextRequest) {
     try {
-        console.log('Calendar API: All cookies:', request.cookies.getAll());
-
-        const token = request.cookies.get("session")?.value
+        const token = request.cookies.get("session")?.value;
 
         if (!token) {
-            console.error("Calendar API: No token found in cookies")
             return NextResponse.json(
-                { error: "Unauthorized - No token found" },
+                { error: "Unauthorized - missing session token" },
                 { status: 401 }
-            )
+            );
         }
 
-        console.log('Calendar API: Token found:', token ? `${token.substring(0, 20)}...` : 'null');
-
-        const session = await verifySession(token)
+        const session = await verifySession(token);
 
         if (!session?.userId) {
-            console.error("Calendar API: Invalid session or no userId", session)
             return NextResponse.json(
-                { error: "Invalid session" },
+                { error: "Unauthorized - invalid session" },
                 { status: 401 }
-            )
+            );
         }
 
-        console.log("Calendar API: Fetching events for user:", session.userId)
+        const { searchParams } = new URL(request.url);
+        const month = searchParams.get("month");
+        const year = searchParams.get("year");
+
+        const dateFilter = buildDateFilter(month, year);
 
         const events = await prisma.calendar_events.findMany({
             where: {
                 user_id: session.userId,
+                ...dateFilter,
             },
-            orderBy: {
-                start_time: "asc",
-            },
-        })
+            orderBy: { start_time: "asc" },
+        });
 
-        console.log("Calendar API: Found", events.length, "events")
-
-        return NextResponse.json({ events }, { status: 200 })
+        return NextResponse.json({ events }, { status: 200 });
     } catch (error) {
-        console.error("Calendar API Error:", error)
+        console.error("Calendar API Error:", error);
+
         return NextResponse.json(
-            { error: "Internal server error", details: error instanceof Error ? error.message : "Unknown error" },
+            {
+                error: "Internal server error",
+                details: error instanceof Error ? error.message : "Unknown error",
+            },
             { status: 500 }
-        )
+        );
     }
 }
