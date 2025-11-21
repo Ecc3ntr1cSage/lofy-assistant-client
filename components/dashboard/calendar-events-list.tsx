@@ -6,9 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Loader2 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { TracingBeam } from "@/components/ui/tracing-beam";
-import { CalendarEventDialog } from "@/components/calendar-event-dialog";
-import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { CalendarEventDialog } from "@/components/dashboard/calendar-event-dialog";
 import {
   Select,
   SelectContent,
@@ -143,35 +141,37 @@ export function CalendarEventsList() {
     <div className="flex flex-col gap-4">
       {/* Filter Section */}
       <Card>
-        <CardContent className="flex items-center gap-4 p-4">
+        <CardContent className="flex flex-col items-start gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by:</span>
           </div>
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Select month" />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((month) => (
-                <SelectItem key={month.value} value={month.value}>
-                  {month.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={selectedYear} onValueChange={setSelectedYear}>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="Select year" />
-            </SelectTrigger>
-            <SelectContent>
-              {years.map((year) => (
-                <SelectItem key={year} value={year.toString()}>
-                  {year}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-full sm:w-[140px]">
+                <SelectValue placeholder="Select month" />
+              </SelectTrigger>
+              <SelectContent>
+                {months.map((month) => (
+                  <SelectItem key={month.value} value={month.value}>
+                    {month.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedYear} onValueChange={setSelectedYear}>
+              <SelectTrigger className="w-full sm:w-[100px]">
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((year) => (
+                  <SelectItem key={year} value={year.toString()}>
+                    {year}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </CardContent>
       </Card>
 
@@ -180,89 +180,77 @@ export function CalendarEventsList() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Calendar className="w-12 h-12 mb-4 text-muted-foreground" />
-            <p className="text-center text-muted-foreground">
+            <p className="px-4 text-center text-muted-foreground">
               No calendar events found for{" "}
               {months[parseInt(selectedMonth) - 1]?.label} {selectedYear}
             </p>
           </CardContent>
         </Card>
       ) : (
-        <div className="flex flex-row">
-          <TracingBeam>
-            {events.map((event) => {
-              const startDate = new Date(event.start_time);
-              const endDate = new Date(event.end_time);
-              const isToday =
-                format(startDate, "yyyy-MM-dd") ===
-                format(new Date(), "yyyy-MM-dd");
+        <div className="grid gap-3 sm:gap-4">
+          {events.map((event) => {
+            const startDate = new Date(event.start_time);
+            const endDate = new Date(event.end_time);
+            const isToday =
+              format(startDate, "yyyy-MM-dd") ===
+              format(new Date(), "yyyy-MM-dd");
 
-              return (
-                <GlowingEffect
-                  key={event.id}
-                  blur={0}
-                  borderWidth={2}
-                  spread={40}
-                  glow={true}
-                  disabled={false}
-                  proximity={64}
-                  inactiveZone={0.01}
-                >
-                  <Card
-                    className="my-4 transition-all cursor-pointer rounded-xl"
-                    onClick={() => handleEventClick(event)}
-                  >
-                    <CardContent className="p-0">
-                      <div className="flex items-center gap-2">
-                        {/* Date Section */}
-                        <div className="flex flex-col items-center justify-center w-24 border-r">
-                          <Badge
-                            variant={isToday ? "default" : "outline"}
-                            className="mb-2"
-                          >
-                            {format(startDate, "EEE")}
-                          </Badge>
-                          <div className="text-2xl font-bold">
-                            {format(startDate, "d")}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {format(startDate, "MMM yyyy")}
-                          </div>
-                        </div>
-
-                        {/* Content Section */}
-                        <div className="flex-1 p-2">
-                          <h3 className="mb-2 text-sm font-semibold line-clamp-1">
-                            {event.title}
-                          </h3>
-
-                          {event.description && (
-                            <>
-                              <p className="mb-3 text-xs text-muted-foreground line-clamp-2">
-                                {event.description}
-                              </p>
-                              <Separator className="mb-3" />
-                            </>
-                          )}
-
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Clock className="w-4 h-4" />
-                            <span>
-                              {event.is_all_day
-                                ? "All day"
-                                : `${format(startDate, "h:mm a")} - ${format(
-                                    endDate,
-                                    "h:mm a"
-                                  )}`}
-                            </span>
-                          </div>
-                        </div>
+            return (
+              <Card
+                key={event.id}
+                className="transition-all cursor-pointer rounded-xl hover:shadow-md active:scale-[0.98]"
+                onClick={() => handleEventClick(event)}
+              >
+                <CardContent className="p-0">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    {/* Date Section */}
+                    <div className="flex flex-col items-center justify-center w-16 py-3 border-r sm:w-24 sm:py-4">
+                      <Badge
+                        variant={isToday ? "default" : "outline"}
+                        className="mb-1 sm:mb-2 text-[10px] sm:text-xs"
+                      >
+                        {format(startDate, "EEE")}
+                      </Badge>
+                      <div className="text-xl font-bold sm:text-2xl">
+                        {format(startDate, "d")}
                       </div>
-                    </CardContent>
-                  </Card>
-                </GlowingEffect>
-              );
-            })}
-          </TracingBeam>
+                      <div className="text-[10px] sm:text-xs text-muted-foreground">
+                        {format(startDate, "MMM yyyy")}
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="flex-1 min-w-0 p-3 sm:p-4">
+                      <h3 className="mb-2 text-sm font-semibold sm:text-base line-clamp-1">
+                        {event.title}
+                      </h3>
+
+                      {event.description && (
+                        <>
+                          <p className="mb-2 text-xs sm:mb-3 sm:text-sm text-muted-foreground line-clamp-2">
+                            {event.description}
+                          </p>
+                          <Separator className="mb-2 sm:mb-3" />
+                        </>
+                      )}
+
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+                        <span className="truncate">
+                          {event.is_all_day
+                            ? "All day"
+                            : `${format(startDate, "h:mm a")} - ${format(
+                                endDate,
+                                "h:mm a"
+                              )}`}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
 
           <CalendarEventDialog
             event={selectedEvent}

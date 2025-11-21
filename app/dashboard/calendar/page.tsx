@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { CalendarEventsList } from "@/components/calendar-events-list";
+import { CalendarEventsList } from "@/components/dashboard/calendar-events-list";
 import { Calendar } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
