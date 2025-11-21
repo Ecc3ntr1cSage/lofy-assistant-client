@@ -1,12 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import * as React from "react";
-import { ReactNode } from "react";
+import { type ReactNode, type ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
-import LaunchUI from "../logos/launch-ui";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -23,25 +21,26 @@ interface ComponentItem {
   description: string;
 }
 
+interface IntroItem {
+  title: string;
+  href: string;
+  description: string;
+}
+
 interface MenuItem {
   title: string;
   href?: string;
   isLink?: boolean;
-  content?: ReactNode;
+  content?: ReactNode | "default" | "components";
 }
 
 interface NavigationProps {
   menuItems?: MenuItem[];
   components?: ComponentItem[];
-  logo?: ReactNode;
   logoTitle?: string;
   logoDescription?: string;
   logoHref?: string;
-  introItems?: {
-    title: string;
-    href: string;
-    description: string;
-  }[];
+  introItems?: IntroItem[];
 }
 
 export default function Navigation({
@@ -62,7 +61,7 @@ export default function Navigation({
     {
       title: "About Us",
       isLink: true,
-      href: "/about",
+      href: "/about-us",
     },
   ],
   components = [
@@ -90,7 +89,6 @@ export default function Navigation({
       description: "Visually or semantically separates content.",
     },
   ],
-  logo = <LaunchUI />,
   logoTitle = "Voice Content Extraction",
   logoDescription = "Landing page template built with React, Shadcn/ui and Tailwind that you can copy/paste into your project.",
   logoHref = "https://www.launchuicomponents.com/",
@@ -133,7 +131,7 @@ export default function Navigation({
                 className={navigationMenuTriggerStyle()}
                 asChild
               >
-                <Link href={item.href || ""}>{item.title}</Link>
+                <Link href={item.href || "#"}>{item.title}</Link>
               </NavigationMenuLink>
             ) : (
               <>
@@ -144,14 +142,13 @@ export default function Navigation({
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
                           <a
-                            className="from-muted/30 to-muted/10 flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-6 no-underline outline-hidden select-none focus:shadow-md"
+                            className="flex flex-col justify-end w-full h-full p-6 no-underline rounded-md select-none from-muted/30 to-muted/10 bg-linear-to-b outline-hidden focus:shadow-md"
                             href={logoHref}
                           >
-                            {logo}
                             <div className="mt-4 mb-2 text-lg font-medium">
                               {logoTitle}
                             </div>
-                            <p className="text-muted-foreground text-sm leading-tight">
+                            <p className="text-sm leading-tight text-muted-foreground">
                               {logoDescription}
                             </p>
                           </a>
@@ -193,7 +190,7 @@ function ListItem({
   title,
   children,
   ...props
-}: React.ComponentProps<"a"> & { title: string }) {
+}: ComponentProps<"a"> & { title: string }) {
   return (
     <li>
       <NavigationMenuLink asChild>
@@ -205,8 +202,8 @@ function ListItem({
           )}
           {...props}
         >
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="text-sm leading-snug text-muted-foreground line-clamp-2">
             {children}
           </p>
         </a>

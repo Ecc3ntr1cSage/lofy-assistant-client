@@ -1,11 +1,10 @@
-import { type VariantProps } from "class-variance-authority";
 import { Menu } from "lucide-react";
 import Link from "next/link";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-import LaunchUI from "@/components/logos/launch-ui";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Navbar as NavbarComponent,
@@ -23,7 +22,7 @@ interface NavbarLink {
 interface NavbarActionProps {
   text: string;
   href: string;
-  variant?: VariantProps<typeof buttonVariants>["variant"];
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
   icon?: ReactNode;
   iconRight?: ReactNode;
   isButton?: boolean;
@@ -41,13 +40,21 @@ interface NavbarProps {
 }
 
 export default function AppNavbar({
-  logo = <LaunchUI />,
-  name = "Launch UI",
-  homeUrl = "https://www.launchuicomponents.com/",
+  logo = (
+    <Image
+      src="/logo.png"
+      alt="Logo"
+      width={32}
+      height={32}
+      className="size-8"
+    />
+  ),
+  name = "Lofy",
+  homeUrl = "/",
   mobileLinks = [
-    { text: "Features", href: "https://www.launchuicomponents.com/" },
-    { text: "Pricing", href: "https://www.launchuicomponents.com/" },
-    { text: "About Us", href: "https://www.launchuicomponents.com/" },
+    { text: "Features", href: "/features" },
+    { text: "Pricing", href: "/pricing" },
+    { text: "About Us", href: "/about-us" },
   ],
   actions = [
     {
@@ -68,17 +75,17 @@ export default function AppNavbar({
 }: NavbarProps) {
   return (
     <header className={cn("sticky top-0 z-50 px-4 pb-4 w-full", className)}>
-      <div className="fade-bottom bg-background/15 absolute left-0 h-16 w-full backdrop-blur-lg"></div>
-      <div className="max-w-7xl relative mx-auto">
+      <div className="absolute left-0 w-full h-16 fade-bottom bg-background/15 backdrop-blur-lg" />
+      <div className="relative mx-auto max-w-7xl">
         <NavbarComponent>
           <NavbarLeft>
-            <a
+            <Link
               href={homeUrl}
               className="flex items-center gap-2 text-xl font-bold"
             >
               {logo}
               {name}
-            </a>
+            </Link>
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
           <NavbarRight>
@@ -86,7 +93,7 @@ export default function AppNavbar({
               action.isButton ? (
                 <Button
                   key={index}
-                  variant={action.variant || "default"}
+                  variant={action.variant}
                   asChild
                 >
                   <Link href={action.href}>
@@ -121,7 +128,7 @@ export default function AppNavbar({
                     href={homeUrl}
                     className="flex items-center gap-2 text-xl font-bold"
                   >
-                    <span>{name}</span>
+                    {name}
                   </Link>
                   {mobileLinks.map((link, index) => (
                     <Link

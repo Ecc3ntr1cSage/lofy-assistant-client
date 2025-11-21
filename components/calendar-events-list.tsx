@@ -206,7 +206,6 @@ export function CalendarEventsList() {
                   disabled={false}
                   proximity={64}
                   inactiveZone={0.01}
-                  className="rounded-xl"
                 >
                   <Card
                     className="my-4 transition-all cursor-pointer rounded-xl"

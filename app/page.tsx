@@ -6,84 +6,47 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { BentoFeatures } from "@/components/bento-features";
-import { useEffect } from "react";
 import Testimonials from "@/components/testimonials";
 
-// Extend the Window interface to include UnicornStudio
-declare global {
-  interface Window {
-    UnicornStudio: {
-      isInitialized: boolean;
-      init: () => void;
-    };
-  }
-}
-
 export default function Home() {
-  useEffect(() => {
-    // Initialize UnicornStudio only on the client side
-    if (!window.UnicornStudio) {
-      window.UnicornStudio = { isInitialized: false, init: () => { } };
-      const script = document.createElement("script");
-      script.src =
-        "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.33/dist/unicornStudio.umd.js";
-      script.onload = () => {
-        if (!window.UnicornStudio.isInitialized) {
-          window.UnicornStudio.init();
-          window.UnicornStudio.isInitialized = true;
-        }
-      };
-      (document.head || document.body).appendChild(script);
-    }
-  }, []);
-
   return (
     <div className="relative min-h-screen">
       <AppNavBar />
-      {/* Top-right unicorn.studio element (fixed, sits still) */}
-      <div
-        className="fixed pointer-events-none -top-20 right-20 z-[-5] "
-        aria-hidden="true"
-      >
-        <div
-          data-us-project="8sHyXD7I66ltEy9jeNC0"
-          style={{ width: "1080px", height: "1200px" }}
-        ></div>
-      </div>
 
-      <section className="relative h-svh flex overflow-hidden">
+      <section className="relative flex overflow-hidden h-svh">
         {/* Animated background elements */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute top-10 left-1/10 w-96 h-96 bg-linear-to-r from-purple-400/30 to-teal-400/30 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 left-1/4 w-96 h-96 bg-linear-to-r from-violet-400/30 to-indigo-400/30 rounded-full blur-3xl animate-pulse "></div>
-          <div className="absolute bottom-1/4 left-1/10 w-96 h-96 bg-linear-to-r from-green-400/30 to-fuchsia-400/30 rounded-full blur-3xl animate-pulse "></div>
+          <div className="absolute rounded-full top-10 left-1/10 w-96 h-96 bg-linear-to-r from-purple-400/30 to-teal-400/30 blur-3xl animate-pulse"></div>
+          <div className="absolute rounded-full top-40 left-1/4 w-96 h-96 bg-linear-to-r from-violet-400/30 to-indigo-400/30 blur-3xl animate-pulse "></div>
+          <div className="absolute rounded-full bottom-1/4 left-1/10 w-96 h-96 bg-linear-to-r from-green-400/30 to-fuchsia-400/30 blur-3xl animate-pulse "></div>
         </div>
 
         <div className="max-w-7xl mx-auto flex-1 grid grid-rows-1 grid-cols-1 h-[calc(100vh-6rem)]">
-          <div className="self-center justify-self-start px-4 sm:px-6 md:px-8 relative z-10">
+          <div className="relative z-10 self-center px-4 justify-self-start sm:px-6 md:px-8">
             <div className="space-y-2">
               <Badge
                 variant="secondary"
-                className="px-4 py-2 bg-linear-to-r from-emerald-400/30 to-indigo-500/40 border border-white backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105"
+                className="px-4 py-2 transition-all duration-300 border border-white shadow-lg bg-linear-to-r from-emerald-400/30 to-indigo-500/40 backdrop-blur-md hover:scale-105"
               >
-                <span className="text-xs bg-linear-to-r from-emerald-800 to-indigo-800 bg-clip-text text-transparent">
+                <span className="text-xs text-transparent bg-linear-to-r from-emerald-800 to-indigo-800 bg-clip-text">
                   ✨ AI-Powered Productivity Application
                 </span>
               </Badge>
               <div className="space-y-4">
-                <h1 className="text-5xl lg:text-8xl font-bold bg-linear-to-r from-emerald-700/80 via-indigo-700/80 to-emerald-700 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-5xl font-bold leading-tight text-transparent lg:text-8xl bg-linear-to-r from-emerald-700/80 via-indigo-700/80 to-emerald-700 bg-clip-text">
                   Lofy ;
                 </h1>
-                <p className="text-lg lg:text-xl text-gray-800 max-w-2xl leading-relaxed ">
-                  Meet your new right hand man.<br /> An Agentic AI Personal Assistant that get things done.
+                <p className="max-w-2xl text-lg leading-relaxed text-gray-800 lg:text-xl ">
+                  Meet your new right hand man.
+                  <br /> An Agentic AI Personal Assistant that get things done.
                 </p>
               </div>
             </div>
-            <div className="mt-10 flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4 mt-10 sm:flex-row">
               <Link href="/register">
                 <Button
                   size="lg"
-                  className="text-lg text-secondary px-8 py-6 bg-linear-to-r from-emerald-600/80 to-indigo-600/80 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="px-8 py-6 text-lg transition-all duration-300 shadow-lg text-secondary bg-linear-to-r from-emerald-600/80 to-indigo-600/80 hover:shadow-xl hover:scale-105"
                 >
                   🤖 Try Lofy Now
                 </Button>
@@ -92,19 +55,19 @@ export default function Home() {
                 <Button
                   variant="link"
                   size="lg"
-                  className="text-lg px-8 py-6  transition-all duration-300 hover:scale-105 text-muted-foreground"
+                  className="px-8 py-6 text-lg transition-all duration-300 hover:scale-105 text-muted-foreground"
                 >
                   Learn More
                 </Button>
               </Link>
             </div>
-            <div className="mt-6 flex items-center gap-6 text-sm text-gray-500">
+            <div className="flex items-center gap-6 mt-6 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>Free To Use</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-sky-500 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></div>
                 <span>No Apps Download</span>
               </div>
             </div>
@@ -112,27 +75,27 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* Features Section */}
-      <section className="py-24 bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30 relative overflow-hidden">
+      <section className="relative py-24 overflow-hidden bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grid-slate-100 mask-[linear-gradient(0deg,white,rgba(255,255,255,0.6))] -z-10"></div>
-        <div className="container mx-auto px-8">
-          <div className="text-center mb-20">
+        <div className="container px-8 mx-auto">
+          <div className="mb-20 text-center">
             <Badge
               variant="secondary"
-              className="mb-6 bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100"
+              className="mb-6 text-blue-700 bg-blue-100 border-blue-200 hover:bg-blue-100"
             >
               <span>💡</span>
               <span>Powerful Features</span>
             </Badge>
-            <h2 className="text-5xl font-bold mb-6 bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h2 className="mb-6 text-5xl font-bold text-transparent bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text">
               Your Personal Assistant AI Agent
             </h2>
-            <p className="text-md lg:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Lofy is an agentic AI personal assistant that integrates seamlessly into your workflow, understanding
-              context and automating tasks to boost your productivity with
-              intelligent automation.
+            <p className="max-w-4xl mx-auto leading-relaxed text-gray-600 text-md lg:text-lg">
+              Lofy is an agentic AI personal assistant that integrates
+              seamlessly into your workflow, understanding context and
+              automating tasks to boost your productivity with intelligent
+              automation.
             </p>
           </div>
           <BentoFeatures />
@@ -140,20 +103,20 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      {/* <section className="py-24 bg-white relative overflow-hidden">
-        <div className="container mx-auto px-8">
-          <div className="text-center mb-20">
+      {/* <section className="relative py-24 overflow-hidden bg-white">
+        <div className="container px-8 mx-auto">
+          <div className="mb-20 text-center">
             <Badge
               variant="secondary"
-              className="mb-6 bg-purple-100 text-purple-700 border-purple-200 hover:bg-purple-100"
+              className="mb-6 text-purple-700 bg-purple-100 border-purple-200 hover:bg-purple-100"
             >
               <span>🚀</span>
               <span>Simple Process</span>
             </Badge>
-            <h2 className="text-5xl font-bold mb-6 bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h2 className="mb-6 text-5xl font-bold text-transparent bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text">
               How Lofy Works
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-gray-600">
               Simple integration, powerful results. Get started in minutes and
               see immediate productivity gains with our intelligent automation
               system.
@@ -163,14 +126,14 @@ export default function Home() {
           <div className="relative">
             <div className="hidden md:block absolute top-20 left-0 right-0 h-0.5 bg-linear-to-r from-blue-200 via-purple-200 to-green-200"></div>
 
-            <div className="grid md:grid-cols-4 gap-8 relative">
+            <div className="relative grid gap-8 md:grid-cols-4">
               <div className="relative group">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-linear-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-lg font-bold text-white transition-transform duration-300 transform -translate-x-1/2 rounded-full shadow-lg -top-4 left-1/2 bg-linear-to-br from-blue-500 to-blue-600 group-hover:scale-110">
                   1
                 </div>
-                <Card className="pt-8 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                  <CardContent className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto">
+                <Card className="p-6 pt-8 transition-all duration-300 bg-white border border-gray-100 shadow-lg rounded-2xl hover:shadow-xl hover:-translate-y-2">
+                  <CardContent className="space-y-4 text-center">
+                    <div className="flex items-center justify-center w-16 h-16 mx-auto bg-linear-to-br from-blue-500 to-blue-600 rounded-2xl">
                       <svg
                         className="w-8 h-8 text-white"
                         fill="none"
@@ -188,7 +151,7 @@ export default function Home() {
                     <CardTitle className="text-xl font-bold text-gray-900">
                       Connect
                     </CardTitle>
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed text-gray-600">
                       Link your email, calendar, and productivity tools in
                       seconds with secure OAuth integration
                     </p>
@@ -197,12 +160,12 @@ export default function Home() {
               </div>
 
               <div className="relative group">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-linear-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-lg font-bold text-white transition-transform duration-300 transform -translate-x-1/2 rounded-full shadow-lg -top-4 left-1/2 bg-linear-to-br from-purple-500 to-purple-600 group-hover:scale-110">
                   2
                 </div>
-                <Card className="pt-8 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                  <CardContent className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto">
+                <Card className="p-6 pt-8 transition-all duration-300 bg-white border border-gray-100 shadow-lg rounded-2xl hover:shadow-xl hover:-translate-y-2">
+                  <CardContent className="space-y-4 text-center">
+                    <div className="flex items-center justify-center w-16 h-16 mx-auto bg-linear-to-br from-purple-500 to-purple-600 rounded-2xl">
                       <svg
                         className="w-8 h-8 text-white"
                         fill="none"
@@ -220,7 +183,7 @@ export default function Home() {
                     <CardTitle className="text-xl font-bold text-gray-900">
                       Learn
                     </CardTitle>
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed text-gray-600">
                       Lofy analyzes your patterns and preferences automatically
                       to understand your workflow
                     </p>
@@ -229,12 +192,12 @@ export default function Home() {
               </div>
 
               <div className="relative group">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-linear-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-lg font-bold text-white transition-transform duration-300 transform -translate-x-1/2 rounded-full shadow-lg -top-4 left-1/2 bg-linear-to-br from-orange-500 to-orange-600 group-hover:scale-110">
                   3
                 </div>
-                <Card className="pt-8 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                  <CardContent className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto">
+                <Card className="p-6 pt-8 transition-all duration-300 bg-white border border-gray-100 shadow-lg rounded-2xl hover:shadow-xl hover:-translate-y-2">
+                  <CardContent className="space-y-4 text-center">
+                    <div className="flex items-center justify-center w-16 h-16 mx-auto bg-linear-to-br from-orange-500 to-orange-600 rounded-2xl">
                       <svg
                         className="w-8 h-8 text-white"
                         fill="none"
@@ -252,7 +215,7 @@ export default function Home() {
                     <CardTitle className="text-xl font-bold text-gray-900">
                       Act
                     </CardTitle>
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed text-gray-600">
                       AI takes action on your behalf, handling routine tasks and
                       automating your workflow
                     </p>
@@ -261,12 +224,12 @@ export default function Home() {
               </div>
 
               <div className="relative group">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-linear-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-110 transition-transform duration-300 z-10">
+                <div className="absolute z-10 flex items-center justify-center w-8 h-8 text-lg font-bold text-white transition-transform duration-300 transform -translate-x-1/2 rounded-full shadow-lg -top-4 left-1/2 bg-linear-to-br from-green-500 to-green-600 group-hover:scale-110">
                   4
                 </div>
-                <Card className="pt-8 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100">
-                  <CardContent className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-linear-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto">
+                <Card className="p-6 pt-8 transition-all duration-300 bg-white border border-gray-100 shadow-lg rounded-2xl hover:shadow-xl hover:-translate-y-2">
+                  <CardContent className="space-y-4 text-center">
+                    <div className="flex items-center justify-center w-16 h-16 mx-auto bg-linear-to-br from-green-500 to-green-600 rounded-2xl">
                       <svg
                         className="w-8 h-8 text-white"
                         fill="none"
@@ -284,7 +247,7 @@ export default function Home() {
                     <CardTitle className="text-xl font-bold text-gray-900">
                       Thrive
                     </CardTitle>
-                    <p className="text-gray-600 text-sm leading-relaxed">
+                    <p className="text-sm leading-relaxed text-gray-600">
                       Focus on what matters while Lofy handles the rest,
                       boosting your productivity exponentially
                     </p>
@@ -296,37 +259,35 @@ export default function Home() {
         </div>
       </section> */}
       {/* Testimonials Section */}
-      <section className="py-24 bg-linear-to-br from-gray-700 via-emerald-800 to-indigo-900 relative overflow-hidden">
+      <section className="relative py-24 overflow-hidden bg-linear-to-br from-gray-700 via-emerald-800 to-indigo-900">
         <Testimonials />
       </section>
 
-
-
       {/* Benefits Section */}
-      <section className="py-24 bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30 relative overflow-hidden">
-        <div className="container mx-auto px-8">
-          <div className="text-center mb-20">
+      <section className="relative py-24 overflow-hidden bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30">
+        <div className="container px-8 mx-auto">
+          <div className="mb-20 text-center">
             <Badge
               variant="secondary"
-              className="mb-6 bg-green-100 text-green-700 border-green-200 hover:bg-green-100"
+              className="mb-6 text-green-700 bg-green-100 border-green-200 hover:bg-green-100"
             >
               <span>💎</span>
               <span>Why Choose Lofy</span>
             </Badge>
-            <h2 className="text-5xl font-bold mb-6 bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h2 className="mb-6 text-5xl font-bold text-transparent bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text">
               Transform Your Productivity
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="max-w-3xl mx-auto text-xl leading-relaxed text-gray-600">
               Join thousands of professionals who have transformed their
               productivity with AI assistance. Experience the future of work
               today.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-green-500 to-green-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -342,10 +303,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     Save 10+ Hours Weekly
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     Automate email management, scheduling, and routine tasks to
                     reclaim your time for high-value work and strategic
                     thinking.
@@ -354,9 +315,9 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-red-500 to-red-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -372,10 +333,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     Never Miss Important
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     AI-powered prioritization ensures urgent matters get your
                     attention while filtering out noise and distractions.
                   </p>
@@ -383,9 +344,9 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-purple-500 to-purple-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -401,10 +362,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     Work-Life Balance
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     Reduce stress and overwhelm by letting AI handle the
                     administrative burden of modern work life.
                   </p>
@@ -412,9 +373,9 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-blue-500 to-blue-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -430,10 +391,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     Enterprise Security
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     Bank-grade encryption and compliance ensure your data stays
                     private and secure at all times.
                   </p>
@@ -441,9 +402,9 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-orange-500 to-orange-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -459,10 +420,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     Seamless Integration
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     Works with your existing tools - no disruption to your
                     current workflow or established habits.
                   </p>
@@ -470,9 +431,9 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card className="group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100">
+            <Card className="p-8 transition-all duration-500 bg-white border border-gray-100 shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-2">
               <CardContent className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-linear-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                <div className="flex items-center justify-center w-12 h-12 transition-transform duration-300 bg-linear-to-br from-cyan-500 to-cyan-600 rounded-xl shrink-0 group-hover:scale-110">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"
@@ -488,10 +449,10 @@ export default function Home() {
                   </svg>
                 </div>
                 <div>
-                  <CardTitle className="text-xl font-bold text-gray-900 mb-3">
+                  <CardTitle className="mb-3 text-xl font-bold text-gray-900">
                     24/7 Availability
                   </CardTitle>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="leading-relaxed text-gray-600">
                     Your AI assistant never sleeps, handling tasks around the
                     clock so you can focus on strategy and innovation.
                   </p>
@@ -503,40 +464,40 @@ export default function Home() {
       </section>
 
       {/* Call to Action Section */}
-      <section className="py-24 bg-linear-to-br from-blue-600 via-purple-600 to-indigo-700 relative overflow-hidden">
+      <section className="relative py-24 overflow-hidden bg-linear-to-br from-blue-600 via-purple-600 to-indigo-700">
         {/* Background decorations */}
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
-        <div className="absolute top-0 left-1/4 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-0 rounded-full left-1/4 w-72 h-72 bg-white/10 blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 delay-1000 rounded-full right-1/4 w-96 h-96 bg-white/5 blur-3xl animate-pulse"></div>
 
-        <div className="container mx-auto px-8 text-center relative z-10">
+        <div className="container relative z-10 px-8 mx-auto text-center">
           <div className="max-w-4xl mx-auto space-y-10">
             <div className="space-y-6">
               <Badge
                 variant="secondary"
-                className="bg-white/20 backdrop-blur-md text-white border-white/20 hover:bg-white/20 px-6 py-3"
+                className="px-6 py-3 text-white bg-white/20 backdrop-blur-md border-white/20 hover:bg-white/20"
               >
                 <span>🚀</span>
                 <span>Ready to Get Started?</span>
               </Badge>
-              <h2 className="text-5xl md:text-6xl font-bold text-white leading-tight">
+              <h2 className="text-5xl font-bold leading-tight text-white md:text-6xl">
                 Ready to Transform Your
-                <span className="block bg-linear-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+                <span className="block text-transparent bg-linear-to-r from-yellow-300 to-orange-300 bg-clip-text">
                   Productivity?
                 </span>
               </h2>
-              <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+              <p className="max-w-3xl mx-auto text-xl leading-relaxed text-blue-100 md:text-2xl">
                 Join the productivity revolution. Start your free trial today
                 and experience the power of AI assistance that works seamlessly
                 in your inbox.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
               <Link href="/register">
                 <Button
                   size="lg"
-                  className="text-xl px-12 py-8 bg-white text-blue-600 hover:bg-gray-50 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 font-semibold"
+                  className="px-12 py-8 text-xl font-semibold text-blue-600 transition-all duration-300 bg-white shadow-2xl hover:bg-gray-50 hover:shadow-3xl hover:scale-105"
                 >
                   🚀 Start Free Trial
                 </Button>
@@ -544,13 +505,13 @@ export default function Home() {
               <Button
                 variant="outline"
                 size="lg"
-                className="text-xl px-12 py-8 border-2 border-white text-white hover:bg-white hover:text-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
+                className="px-12 py-8 text-xl font-semibold text-white transition-all duration-300 border-2 border-white shadow-lg hover:bg-white hover:text-blue-600 hover:shadow-xl hover:scale-105"
               >
                 📺 Watch Demo
               </Button>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-blue-100">
+            <div className="flex flex-col items-center justify-center gap-8 text-blue-100 sm:flex-row">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                 <span className="font-medium">No credit card required</span>
@@ -565,7 +526,7 @@ export default function Home() {
               </div>
             </div>
             <div className="pt-8">
-              <p className="text-blue-200 text-sm">
+              <p className="text-sm text-blue-200">
                 Trusted by 10,000+ professionals worldwide
               </p>
             </div>

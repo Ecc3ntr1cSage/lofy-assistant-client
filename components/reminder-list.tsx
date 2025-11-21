@@ -134,7 +134,7 @@ export function ReminderList() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Loader2 className="h-12 w-12 animate-spin text-muted-foreground mb-4" />
+          <Loader2 className="w-12 h-12 mb-4 animate-spin text-muted-foreground" />
           <p className="text-center text-muted-foreground">
             Loading reminders...
           </p>
@@ -147,7 +147,7 @@ export function ReminderList() {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12">
-          <Bell className="h-12 w-12 text-destructive mb-4" />
+          <Bell className="w-12 h-12 mb-4 text-destructive" />
           <p className="text-center text-destructive">{error}</p>
         </CardContent>
       </Card>
@@ -160,7 +160,7 @@ export function ReminderList() {
       <Card>
         <CardContent className="flex items-center gap-4 p-4">
           <div className="flex items-center gap-2">
-            <Bell className="h-5 w-5 text-muted-foreground" />
+            <Bell className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by:</span>
           </div>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
@@ -189,7 +189,7 @@ export function ReminderList() {
           </Select>
           <div className="ml-auto">
             <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
+              <Plus className="w-4 h-4 mr-2" />
               Add Reminder
             </Button>
           </div>
@@ -200,7 +200,7 @@ export function ReminderList() {
       {reminders.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
-            <Bell className="h-12 w-12 text-muted-foreground mb-4" />
+            <Bell className="w-12 h-12 mb-4 text-muted-foreground" />
             <p className="text-center text-muted-foreground">
               No reminders found for{" "}
               {months[parseInt(selectedMonth) - 1]?.label} {selectedYear}
@@ -228,13 +228,13 @@ export function ReminderList() {
                   inactiveZone={0.01}
                 >
                   <Card
-                    className="transition-all my-4 cursor-pointer rounded-xl"
+                    className="my-4 transition-all cursor-pointer rounded-xl"
                     onClick={() => handleReminderClick(reminder)}
                   >
                     <CardContent className="p-0">
                       <div className="flex items-center gap-2">
                         {/* Date Section */}
-                        <div className="w-24 flex flex-col items-center justify-center border-r">
+                        <div className="flex flex-col items-center justify-center w-24 border-r">
                           <Badge
                             variant={isToday ? "default" : "outline"}
                             className="mb-2"
@@ -252,7 +252,7 @@ export function ReminderList() {
                         {/* Content Section */}
                         <div className="flex-1 p-2">
                           <div className="flex items-start justify-between mb-2">
-                            <h3 className="font-semibold text-sm line-clamp-2 flex-1">
+                            <h3 className="flex-1 text-sm font-semibold line-clamp-2">
                               {reminder.message}
                             </h3>
                             <Badge
@@ -266,7 +266,7 @@ export function ReminderList() {
                           <Separator className="mb-3" />
 
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Clock className="h-4 w-4" />
+                            <Clock className="w-4 h-4" />
                             <span>{format(reminderDate, "h:mm a")}</span>
                           </div>
                         </div>

@@ -19,7 +19,8 @@ const threadPosts = [
     id: "ig-tp-DPsfpsVj1iS",
   },
   {
-    permalink: "https://www.threads.com/@naddynaharmakeupartist/post/DQHTJD9kr0M",
+    permalink:
+      "https://www.threads.com/@naddynaharmakeupartist/post/DQHTJD9kr0M",
     id: "ig-tp-DQHTJD9kr0M",
   },
   {
@@ -30,7 +31,7 @@ const threadPosts = [
 
 export default function Testimonials() {
   return (
-    <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-12 py-8">
+    <div className="relative w-full px-4 py-8 mx-auto max-w-7xl sm:px-12">
       <Carousel
         opts={{
           align: "start",
@@ -41,7 +42,7 @@ export default function Testimonials() {
         <CarouselContent className="-ml-2 md:-ml-4">
           {threadPosts.map(({ permalink, id }) => (
             <CarouselItem key={id} className="pl-2 md:pl-4 md:basis-1/2">
-              <Card className="h-full border-border/40 bg-card/50 p-1 justify-center items-center backdrop-blur-sm hover:border-border transition-all duration-300 hover:shadow-lg overflow-hidden">
+              <Card className="items-center justify-center h-full p-1 overflow-hidden transition-all duration-300 border-border/40 bg-card/50 backdrop-blur-sm hover:border-border hover:shadow-lg">
                 <blockquote
                   className="text-post-media"
                   data-text-post-permalink={permalink}
@@ -52,12 +53,12 @@ export default function Testimonials() {
                     href={permalink}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="block p-8 sm:p-10 text-center no-underline group"
+                    className="block p-8 text-center no-underline sm:p-10 group"
                   >
                     <div className="flex flex-col items-center gap-6">
                       <div className="relative">
-                        <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full" />
-                        <div className="relative bg-background p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                        <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
+                        <div className="relative p-4 transition-transform duration-300 bg-background rounded-2xl group-hover:scale-110">
                           <svg
                             aria-label="Threads"
                             className="w-8 h-8 text-foreground"
@@ -70,7 +71,7 @@ export default function Testimonials() {
                           </svg>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                      <div className="flex items-center gap-2 text-sm font-semibold transition-colors text-foreground group-hover:text-primary">
                         View on Threads
                         <ExternalLink className="w-4 h-4" />
                       </div>
