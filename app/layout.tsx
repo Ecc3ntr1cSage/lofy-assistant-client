@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "sonner";
+import { LenisScroll } from "@/components/lenis-scroll";
 
 // Fonts
 const inter = Inter({
@@ -27,10 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased overflow-x-hidden`}
       >
+        <LenisScroll />
         <Providers>
           {children}
           <Toaster position="top-center" richColors />

@@ -48,7 +48,7 @@ export const BentoGridItem = ({
           <div className="relative bg-white flex h-full flex-col justify-between gap-4 p-4 dark:bg-neutral-950 dark:shadow-[0px_0px_27px_0px_#2D2D2D]">
             <div className="relative flex flex-1 flex-col justify-between gap-3">
               {header && (
-                <div className="w-full h-32 overflow-hidden rounded-lg">
+                <div className="w-full h-40 overflow-hidden rounded-lg">
                   {header}
                 </div>
               )}

@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
+  NavbarCenter,
   Navbar as NavbarComponent,
   NavbarLeft,
-  NavbarRight,
 } from "@/components/ui/navbar";
 import Navigation from "@/components/ui/navigation";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -22,7 +22,13 @@ interface NavbarLink {
 interface NavbarActionProps {
   text: string;
   href: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?:
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | "link";
   icon?: ReactNode;
   iconRight?: ReactNode;
   isButton?: boolean;
@@ -75,7 +81,7 @@ export default function AppNavbar({
 }: NavbarProps) {
   return (
     <header className={cn("sticky top-0 z-50 px-4 pb-4 w-full", className)}>
-      <div className="absolute left-0 w-full h-16 fade-bottom bg-background/15 backdrop-blur-lg" />
+      <div className="absolute left-0 w-full h-20 fade-bottom bg-background/15 backdrop-blur-lg" />
       <div className="relative mx-auto max-w-7xl">
         <NavbarComponent>
           <NavbarLeft>
@@ -88,14 +94,10 @@ export default function AppNavbar({
             </Link>
             {showNavigation && (customNavigation || <Navigation />)}
           </NavbarLeft>
-          <NavbarRight>
+          <NavbarCenter>
             {actions.map((action, index) =>
               action.isButton ? (
-                <Button
-                  key={index}
-                  variant={action.variant}
-                  asChild
-                >
+                <Button key={index} variant={action.variant} asChild>
                   <Link href={action.href}>
                     {action.icon}
                     {action.text}
@@ -142,7 +144,7 @@ export default function AppNavbar({
                 </nav>
               </SheetContent>
             </Sheet>
-          </NavbarRight>
+          </NavbarCenter>
         </NavbarComponent>
       </div>
     </header>

@@ -157,12 +157,12 @@ export function ReminderList() {
     <div className="flex flex-col gap-4">
       {/* Filter Section */}
       <Card>
-        <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4">
+        <CardContent className="flex flex-col items-start gap-3 p-3 sm:flex-row sm:items-center sm:gap-4 sm:p-4">
           <div className="flex items-center gap-2">
             <Bell className="w-5 h-5 text-muted-foreground" />
             <span className="text-sm font-medium">Filter by:</span>
           </div>
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex w-full gap-2 sm:w-auto">
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>
               <SelectTrigger className="w-full sm:w-[140px]">
                 <SelectValue placeholder="Select month" />
@@ -205,7 +205,7 @@ export function ReminderList() {
         <Card>
           <CardContent className="flex flex-col items-center justify-center py-12">
             <Bell className="w-12 h-12 mb-4 text-muted-foreground" />
-            <p className="text-center text-muted-foreground px-4">
+            <p className="px-4 text-center text-muted-foreground">
               No reminders found for{" "}
               {months[parseInt(selectedMonth) - 1]?.label} {selectedYear}
             </p>
@@ -228,14 +228,14 @@ export function ReminderList() {
                 <CardContent className="p-0">
                   <div className="flex items-center gap-2 sm:gap-3">
                     {/* Date Section */}
-                    <div className="flex flex-col items-center justify-center w-16 sm:w-24 border-r py-3 sm:py-4">
+                    <div className="flex flex-col items-center justify-center w-16 py-3 border-r sm:w-24 sm:py-4">
                       <Badge
                         variant={isToday ? "default" : "outline"}
                         className="mb-1 sm:mb-2 text-[10px] sm:text-xs"
                       >
                         {format(reminderDate, "EEE")}
                       </Badge>
-                      <div className="text-xl sm:text-2xl font-bold">
+                      <div className="text-xl font-bold sm:text-2xl">
                         {format(reminderDate, "d")}
                       </div>
                       <div className="text-[10px] sm:text-xs text-muted-foreground">
@@ -244,9 +244,9 @@ export function ReminderList() {
                     </div>
 
                     {/* Content Section */}
-                    <div className="flex-1 p-3 sm:p-4 min-w-0">
-                      <div className="flex items-start justify-between mb-2 gap-2">
-                        <h3 className="flex-1 text-sm sm:text-base font-semibold line-clamp-2">
+                    <div className="flex-1 min-w-0 p-3 sm:p-4">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="flex-1 text-sm font-semibold sm:text-base line-clamp-2">
                           {reminder.message}
                         </h3>
                         <Badge
