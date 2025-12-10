@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { type ReactNode, type ComponentProps } from "react";
+import {
+  Calendar,
+  Bell,
+  Brain,
+  ListChecks,
+  Mic,
+  LucideIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -25,6 +33,7 @@ interface IntroItem {
   title: string;
   href: string;
   description: string;
+  icon?: LucideIcon;
 }
 
 interface MenuItem {
@@ -89,35 +98,36 @@ export default function Navigation({
       description: "Visually or semantically separates content.",
     },
   ],
-  logoTitle = "Voice Content Extraction",
-  logoDescription = "Landing page template built with React, Shadcn/ui and Tailwind that you can copy/paste into your project.",
-  logoHref = "https://www.launchuicomponents.com/",
   introItems = [
     {
       title: "Smart Calendar",
-      href: "https://www.launchuicomponents.com/",
-      description:
-        "Re-usable components built using Radix UI and Tailwind CSS.",
+      href: "/smart-calendar",
+      description: "Organize your schedule",
+      icon: Calendar,
     },
     {
-      title: "Flexible Reminders",
-      href: "https://www.launchuicomponents.com/",
-      description: "How to install dependencies and structure your app.",
+      title: "Flexible Reminder",
+      href: "/flexible-reminder",
+      description: "Never miss tasks",
+      icon: Bell,
     },
     {
       title: "Save To Memory",
-      href: "https://www.launchuicomponents.com/",
-      description: "Styles for headings, paragraphs, lists...etc",
+      href: "/save-to-memory",
+      description: "Store important info",
+      icon: Brain,
     },
     {
-      title: "Centralized Task Management",
-      href: "https://www.launchuicomponents.com/",
-      description: "Styles for headings, paragraphs, lists...etc",
+      title: "Centralized Tasks",
+      href: "/centralized-tasks",
+      description: "Manage everything",
+      icon: ListChecks,
     },
     {
       title: "Voice Content Extraction",
-      href: "https://www.launchuicomponents.com/",
-      description: "Styles for headings, paragraphs, lists...etc",
+      href: "/voice-content-extraction",
+      description: "Capture content easily",
+      icon: Mic,
     },
   ],
 }: NavigationProps) {
@@ -138,26 +148,16 @@ export default function Navigation({
                 <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                 <NavigationMenuContent>
                   {item.content === "default" ? (
-                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                      <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <a
-                            className="flex flex-col justify-end w-full h-full p-6 no-underline rounded-md select-none from-muted/30 to-muted/10 bg-linear-to-b outline-hidden focus:shadow-md"
-                            href={logoHref}
-                          >
-                            <div className="mt-4 mb-2 text-lg font-medium">
-                              {logoTitle}
-                            </div>
-                            <p className="text-sm leading-tight text-muted-foreground">
-                              {logoDescription}
-                            </p>
-                          </a>
-                        </NavigationMenuLink>
-                      </li>
+                    <ul className="grid gap-3 p-6 md:w-[500px] lg:w-[600px] md:grid-cols-2">
                       {introItems.map((intro, i) => (
-                        <ListItem key={i} href={intro.href} title={intro.title}>
+                        <FeatureItem
+                          key={i}
+                          href={intro.href}
+                          title={intro.title}
+                          icon={intro.icon}
+                        >
                           {intro.description}
-                        </ListItem>
+                        </FeatureItem>
                       ))}
                     </ul>
                   ) : item.content === "components" ? (
@@ -182,6 +182,45 @@ export default function Navigation({
         ))}
       </NavigationMenuList>
     </NavigationMenu>
+  );
+}
+
+function FeatureItem({
+  className,
+  title,
+  children,
+  icon: Icon,
+  ...props
+}: ComponentProps<"a"> & { title: string; icon?: LucideIcon }) {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          data-slot="feature-item"
+          className={cn(
+            "group block space-y-2 rounded-lg p-4 leading-none no-underline outline-hidden transition-all select-none",
+            "hover:bg-accent/50 hover:scale-105 hover:shadow-sm",
+            "focus:bg-accent focus:scale-105",
+            className
+          )}
+          {...props}
+        >
+          <div className="flex items-center gap-3">
+            {Icon && (
+              <div className="flex items-center justify-center w-10 h-10 transition-colors rounded-md bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground">
+                <Icon className="w-5 h-5" />
+              </div>
+            )}
+            <div className="flex-1">
+              <div className="mb-1 text-sm font-semibold leading-none">
+                {title}
+              </div>
+              <p className="text-xs text-muted-foreground">{children}</p>
+            </div>
+          </div>
+        </a>
+      </NavigationMenuLink>
+    </li>
   );
 }
 

@@ -5,8 +5,8 @@ import AppNavBar from "@/components/app-navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { BentoFeatures } from "@/components/bento-features";
-import Testimonials from "@/components/testimonials";
+import { BentoFeatures } from "@/components/brochure/bento-features";
+import Testimonials from "@/components/brochure/testimonials";
 
 export default function Home() {
   return (

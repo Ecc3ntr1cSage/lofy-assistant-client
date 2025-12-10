@@ -34,8 +34,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AuroraBackground } from "@/components/ui/aurora-background";
-import { motion } from "motion/react";
 import { toast } from "sonner";
 import { Suspense } from "react";
 
@@ -124,11 +122,11 @@ function LoginForm() {
         router.push(redirect || "/dashboard");
       } else {
         toast.error(result.error || "Login failed");
-        console.error("❌ Login Error:", result.error);
+        console.error("Login Error:", result.error);
       }
     } catch (error) {
       toast.error("Login failed. Please try again.");
-      console.error("💥 Network Error:", error);
+      console.error("Network Error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -230,34 +228,19 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <AuroraBackground>
-      <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="relative flex flex-col gap-4 items-center justify-center px-4"
+    <div className="min-h-screen flex items-center justify-center">
+      <Suspense
+        fallback={
+          <Card className="min-w-sm mx-auto shadow-xl rounded-xl">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
+              <CardDescription>Loading...</CardDescription>
+            </CardHeader>
+          </Card>
+        }
       >
-        <div className="min-h-screen flex items-center justify-center">
-          <Suspense
-            fallback={
-              <Card className="min-w-sm mx-auto shadow-xl rounded-xl">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl font-bold">
-                    Welcome Back
-                  </CardTitle>
-                  <CardDescription>Loading...</CardDescription>
-                </CardHeader>
-              </Card>
-            }
-          >
-            <LoginForm />
-          </Suspense>
-        </div>
-      </motion.div>
-    </AuroraBackground>
+        <LoginForm />
+      </Suspense>
+    </div>
   );
 }

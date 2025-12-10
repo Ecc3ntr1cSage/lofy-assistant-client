@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { Toaster } from "sonner";
+import { LenisScroll } from "@/components/lenis-scroll";
 
 // Fonts
 const inter = Inter({
@@ -30,8 +32,10 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} antialiased overflow-x-hidden`}
       >
+        <LenisScroll />
         <Providers>
           {children}
+          <Toaster position="top-center" richColors />
         </Providers>
       </body>
     </html>
