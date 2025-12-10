@@ -47,13 +47,14 @@ model feedbacks {
 }
 
 model memories {
-  id         Int      @id @default(autoincrement())
-  user_id    String   @db.Uuid
+  id         Int                    @id @default(autoincrement())
+  user_id    String                 @db.Uuid
   title      String?
   content    String
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @updatedAt @db.Timestamptz(6)
-  user       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at DateTime               @updatedAt @db.Timestamptz(6)
+  embedding  Unsupported("vector")?
+  user       users                  @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@map("memories")
@@ -70,7 +71,9 @@ model calendar_events {
   is_all_day            Boolean                @default(false)
   created_at            DateTime               @default(now()) @db.Timestamptz(6)
   updated_at            DateTime               @updatedAt @db.Timestamptz(6)
+  reminder_id           Int?
   calendar_event_google calendar_event_google?
+  reminders             reminders?             @relation(fields: [reminder_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user                  users                  @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
@@ -144,14 +147,15 @@ model collection_members {
 }
 
 model reminders {
-  id            Int      @id @default(autoincrement())
-  user_id       String   @db.Uuid
-  message       String
-  reminder_time DateTime @db.Timestamptz(6)
-  status        String
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime @updatedAt @db.Timestamptz(6)
-  user          users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id              Int               @id @default(autoincrement())
+  user_id         String            @db.Uuid
+  message         String
+  reminder_time   DateTime          @db.Timestamptz(6)
+  status          String
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @updatedAt @db.Timestamptz(6)
+  calendar_events calendar_events[]
+  user            users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@index([reminder_time])
