@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { createSession } from "@/lib/session"
+import { hashPhone } from "@/lib/hash-phone"
 
 export const runtime = 'nodejs'
 
@@ -16,25 +17,25 @@ export async function POST(request: NextRequest) {
     try {
         const { phone: rawPhone, pin }: { phone: string; pin: string } = await request.json()
 
-        // Normalize phone: remove all non-digits including '+'
-        const phone = rawPhone.replace(/\D/g, "")
+        console.log("🔍 Login attempt:", { rawPhone, pinLength: pin?.length })
 
-        if (!phone || !pin || !/^\d{6}$/.test(pin)) {
+        // Normalize and hash phone using shared utility
+        if (!rawPhone || !pin || !/^\d{6}$/.test(pin)) {
+            console.log("❌ Validation failed:", { hasPhone: !!rawPhone, hasPin: !!pin, pinValid: !/^\d{6}$/.test(pin) })
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
         }
 
-        // Hash phone directly using Web Crypto API
-        const encoder = new TextEncoder()
-        const data = encoder.encode(phone)
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-        const hashArray = Array.from(new Uint8Array(hashBuffer))
-        const hashedPhone = hashArray.map(b => b.toString(16).padStart(2, "0")).join("")
+        const hashedPhone = await hashPhone(rawPhone)
+        console.log("🔐 Hashed phone:", hashedPhone)
 
         const user = await prisma.users.findFirst({
             where: { hashed_phone: hashedPhone },
         })
 
+        console.log("👤 User found:", !!user, user ? { id: user.id, hasPin: !!user.pin } : null)
+
         if (!user || !user.pin) {
+            console.log("❌ No user found or no PIN set")
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
         }
 
@@ -42,7 +43,12 @@ export async function POST(request: NextRequest) {
         const hashedInputPin = await hashData(pin)
         const pinMatch = hashedInputPin === user.pin
 
+        console.log("🔑 PIN match:", pinMatch)
+        console.log("   Input hash:", hashedInputPin)
+        console.log("   Stored hash:", user.pin)
+
         if (!pinMatch) {
+            console.log("❌ PIN mismatch")
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
         }
 
