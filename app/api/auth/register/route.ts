@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/lib/generated/prisma";
 import { randomUUID } from "crypto";
 
 export const runtime = 'nodejs'
 
-async function hashPhone(phone: string): Promise<string> {
-  const normalizedPhone = phone.replace(/\D/g, "")
+async function hashData(data: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(normalizedPhone)
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+  const encodedData = encoder.encode(data)
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encodedData)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
   return hashArray.map(b => b.toString(16).padStart(2, "0")).join("")
+}
+
+async function hashPhone(phone: string): Promise<string> {
+  const normalizedPhone = phone.replace(/\D/g, "")
+  return hashData(normalizedPhone)
 }
 
 async function encryptPhone(phone: string): Promise<string> {
@@ -81,8 +84,8 @@ export async function POST(request: NextRequest) {
       where: { hashed_phone: hashedPhone },
     });
 
-    // Hash PIN
-    const hashedPin = await bcrypt.hash(pin, 10);
+    // Hash PIN using SHA-256
+    const hashedPin = await hashData(pin);
 
     // Prepare metadata with onboarding answers if provided
     const metadata = (question1 || question2 || question3) ? {

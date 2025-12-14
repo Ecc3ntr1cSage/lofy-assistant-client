@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
-import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 import { createSession } from "@/lib/session"
 
 export const runtime = 'nodejs'
+
+async function hashData(data: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const encodedData = encoder.encode(data)
+  const hashBuffer = await crypto.subtle.digest("SHA-256", encodedData)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("")
+}
 
 export async function POST(request: NextRequest) {
     try {
@@ -31,8 +38,9 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
         }
 
-        // Verify PIN
-        const pinMatch = await bcrypt.compare(pin, user.pin)
+        // Verify PIN using SHA-256 hash comparison
+        const hashedInputPin = await hashData(pin)
+        const pinMatch = hashedInputPin === user.pin
 
         if (!pinMatch) {
             return NextResponse.json({ error: "Invalid credentials" }, { status: 401 })
